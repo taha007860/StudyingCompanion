@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import '../styles/TaskForm.css';
+
 function TaskForm(props) {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
     const [status, setStatus] = useState('');
+    const [showAddTaskForm, setShowAddTaskForm] = useState(false);
+
+    const handleShowAddTaskForm = () => {
+        setShowAddTaskForm(true);
+    };
+
+    const handleCloseAddTaskForm = () => {
+        setShowAddTaskForm(false);
+    };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -23,17 +33,18 @@ function TaskForm(props) {
 
     return (
         <form onSubmit={handleSubmit}>
+            <button className={showAddTaskForm ? 'hide' : ''} onClick={handleShowAddTaskForm}>Add Task +</button>
             <label>
                 Name:
-                <input type="text" value={name} onChange={(event) => setName(event.target.value)} />
+                <input type="text" value={name} onChange={(event) => setName(event.target.value)}/>
             </label>
             <label>
                 Description:
-                <input type="text" value={description} onChange={(event) => setDescription(event.target.value)} />
+                <input type="text" value={description} onChange={(event) => setDescription(event.target.value)}/>
             </label>
             <label>
                 Date:
-                <input type="date" value={date} onChange={(event) => setDate(event.target.value)} />
+                <input type="date" value={date} onChange={(event) => setDate(event.target.value)}/>
             </label>
             <label>
                 Status:
@@ -43,8 +54,19 @@ function TaskForm(props) {
                     <option value="Completed">Completed</option>
                 </select>
             </label>
-            <input type="submit" value="Submit" />
+            <input type="submit" value="Submit"/>
         </form>
+
+    // {showAddTaskForm && (
+    //     <div className="modal">
+    //         <div className="modal-content">
+    //             <span className="close" onClick={handleCloseAddTaskForm}>&times;</span>
+    //             <TaskForm onAddTask={() => {
+    //             }}/>
+    //         </div>
+    //     </div>
+    // )}
     );
 }
+
 export default TaskForm;

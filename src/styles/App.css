@@ -1,0 +1,10 @@
+.App {
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.loginPage{
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+}

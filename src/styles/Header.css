@@ -5,33 +5,33 @@ header {
     padding: 1rem;
     background-color: #ffffff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  header img {
+}
+
+header img {
     height: 50px;
-  }
-  
-  nav ul {
+}
+
+nav ul {
     list-style: none;
     display: flex;
     align-items: center;
-  }
-  
-  nav li {
+}
+
+nav li {
     margin-right: 1rem;
-  }
-  
-  nav a {
+}
+
+nav a {
     color: #333333;
     text-decoration: none;
     font-weight: bold;
-  }
-  
-  nav a:hover {
+}
+
+nav a:hover {
     color: #0077cc;
-  }
-  
-  button {
+}
+
+button {
     margin-right: 1rem;
     padding: 0.5rem 1rem;
     border-radius: 4px;
@@ -40,26 +40,28 @@ header {
     color: #ffffff;
     font-weight: bold;
     cursor: pointer;
-  }
-  
-  .user-profile {
+}
+
+.user-profile {
     display: flex;
     align-items: center;
-  }
-  
-  .user-profile span {
+}
+
+.user-profile span {
     margin-right: 1rem;
     margin-top: 4px;
-  }
-  .user-profile button {
+}
+
+.user-profile button {
     margin-top: 12.5px;
-  }
-  .dropdown {
+}
+
+.dropdown {
     position: relative;
     display: inline-block;
-  }
-  
-  .dropdown-content {
+}
+
+.dropdown-content {
     position: absolute;
     top: 100%;
     left: 0;
@@ -69,10 +71,10 @@ header {
     padding: 1rem;
     border: 1px solid #ccc;
     border-radius: 5px;
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-  }
-  
-  .close {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.close {
     position: absolute;
     top: 0;
     right: 0;
@@ -80,19 +82,20 @@ header {
     font-weight: bold;
     color: #aaa;
     cursor: pointer;
-  }
-  
-  .close:hover,
-  .close:focus {
+}
+
+.close:hover,
+.close:focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;
-  }
-  
-  .hide {
+}
+
+.hide {
     display: none;
-  }
-  .modal {
+}
+
+.modal {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -103,9 +106,9 @@ header {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.4);
-  }
-  
-  .modal-content {
+}
+
+.modal-content {
     display: flex;
     flex-direction: column;
     position: relative;
@@ -114,18 +117,18 @@ header {
     border-radius: 5px;
     width: 50%;
     margin: auto;
-  }
-  
-  form {
+}
+
+form {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-  }
-  
-  label {
+}
+
+label {
     margin-bottom: 0.5rem;
     font-size: 1.2rem;
     font-weight: 500;
-    }
+}
     

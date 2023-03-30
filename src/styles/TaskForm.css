@@ -2,33 +2,33 @@ form {
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-  
+}
+
 form label {
     display: flex;
     flex-direction: column;
     margin-bottom: 1rem;
     font-size: 1.2rem;
     font-weight: 500;
-  }
-  
-  form input[type="text"],
-  form input[type="date"],
-  form select {
+}
+
+form input[type="text"],
+form input[type="date"],
+form select {
     padding: 0.5rem;
     font-size: 1.2rem;
     border: 2px solid #ccc;
     border-radius: 5px;
     width: 100%;
-  }
-  
-  form select {
+}
+
+form select {
     width: 100%;
     background-color: #fff;
     cursor: pointer;
-  }
-  
-  form input[type="submit"] {
+}
+
+form input[type="submit"] {
     margin-top: 1rem;
     padding: 0.5rem 1rem;
     font-size: 1.2rem;
@@ -38,8 +38,8 @@ form label {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-  }
-  
-  form input[type="submit"]:hover {
+}
+
+form input[type="submit"]:hover {
     background-color: #0069d9;
-  } 
+}

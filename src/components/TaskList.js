@@ -1,11 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import '../styles/TaskList.css';
+
 function TaskList() {
     const [tasks, setTasks] = useState([
-        { name: 'Task 1', description: 'Lorem ipsum dolor sit amet', dueDate: '2023-03-22', priority: 'High', status: 'In Progress' },
-        { name: 'Task 2', description: 'consectetur adipiscing elit', dueDate: '2023-03-25', priority: 'Low', status: 'In Progress' },
-        { name: 'Task 3', description: 'sed do eiusmod tempor', dueDate: '2023-03-27', priority: 'Medium', status: 'Not Started' }
-        // Add your own tasks to this array
+        {
+            name: 'Task 1',
+            description: 'Lorem ipsum dolor sit amet',
+            dueDate: '2023-03-22',
+            priority: 'High',
+            status: 'In Progress'
+        },
+        {
+            name: 'Task 2',
+            description: 'consectetur adipiscing elit',
+            dueDate: '2023-03-25',
+            priority: 'Low',
+            status: 'In Progress'
+        },
+        {
+            name: 'Task 3',
+            description: 'sed do eiusmod tempor',
+            dueDate: '2023-03-27',
+            priority: 'Medium',
+            status: 'Not Started'
+        }
     ]);
 
     const [filterType, setFilterType] = useState("status");
@@ -71,8 +89,8 @@ function TaskList() {
     };
 
     const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setEditedTask((prevTask) => ({ ...prevTask, [name]: value }));
+        const {name, value} = event.target;
+        setEditedTask((prevTask) => ({...prevTask, [name]: value}));
     };
 
     const deleteTask = (index) => {
@@ -96,7 +114,7 @@ function TaskList() {
             </select>
 
             <label htmlFor="filter-value">Filter Value:</label>
-            <input id="filter-value" type="text" value={filterValue} onChange={handleFilterValueChange} />
+            <input id="filter-value" type="text" value={filterValue} onChange={handleFilterValueChange}/>
 
             <button onClick={handleClearFilter}>Clear Filter</button>
 
@@ -117,13 +135,16 @@ function TaskList() {
                         {editTaskIndex === index ? (
                             <React.Fragment>
                                 <td>
-                                    <input type="text" name="name" value={editedTask.name} onChange={handleInputChange} />
+                                    <input type="text" name="name" value={editedTask.name}
+                                           onChange={handleInputChange}/>
                                 </td>
                                 <td>
-                                    <input type="text" name="description" value={editedTask.description} onChange={handleInputChange} />
+                                    <input type="text" name="description" value={editedTask.description}
+                                           onChange={handleInputChange}/>
                                 </td>
                                 <td>
-                                    <input type="date" name="dueDate" value={editedTask.dueDate} onChange={handleInputChange} />
+                                    <input type="date" name="dueDate" value={editedTask.dueDate}
+                                           onChange={handleInputChange}/>
                                 </td>
                                 <td>
                                     <select name="priority" value={editedTask.priority} onChange={handleInputChange}>
