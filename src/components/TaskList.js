@@ -102,8 +102,8 @@ function TaskList() {
     const filteredList = filteredTasks ? filteredTasks : tasks;
 
     return (
-        <div>
-            <h2 className="task">Task List</h2>
+        <div class='m-3'>
+            <h2 className="task mt-3">Task List</h2>
 
             <label htmlFor="filter-type">Filter By:</label>
             <select id="filter-type" value={filterType} onChange={handleFilterTypeChange}>

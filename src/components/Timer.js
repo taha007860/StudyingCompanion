@@ -50,9 +50,7 @@ const Timer = () => {
 
     return (
         <div>
-            <div className="Logo-Bar">
-            </div>
-            <div className="container">
+            <div className="container m-3">
                 <input className="Input" type="text" placeholder="Enter Timer" value={inputTime}
                        onChange={handleInputChange}/>
                 <h1 className="TimeLeft">

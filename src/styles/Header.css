@@ -131,4 +131,10 @@ label {
     font-size: 1.2rem;
     font-weight: 500;
 }
-    
+
+.logoStyle,logoStyle:hover{
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 2rem;
+    color: black;
+}

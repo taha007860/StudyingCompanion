@@ -1,10 +1,23 @@
-.App {
+. {
     text-align: center;
     box-sizing: border-box;
 }
 
-.loginPage{
-    display: block;
-    margin-right: auto;
-    margin-left: auto;
+.btn{
+    margin: unset;
 }
+
+.loginContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: center;
+    justify-content: center;
+    min-height: 50vh;
+}
+
+.welcomeText{
+    font-size: 2rem;
+}
+
+
