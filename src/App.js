@@ -1,19 +1,21 @@
-import {useEffect, useState} from 'react';
-import {BrowserRouter, Route, Routes, useParams} from 'react-router-dom';
+import {BrowserRouter} from 'react-router-dom';
 import Header from './components/Header';
-import TaskList from './components/TaskList';
-import LoginScreen from "./auth/LoginScreen";
-import Timer from './components/Timer';
-import ProtectedRoute from "./auth/ProtectedRoute";
 import Views from "./Views";
+import {CssBaseline, ThemeProvider} from "@mui/material";
+import theme from 'styles/theme';
 
 function App() {
 
     return (
-        <BrowserRouter>
-            <Header />
-            <Views />
-        </BrowserRouter>
+        <ThemeProvider theme={theme}>
+            <CssBaseline>
+                <BrowserRouter>
+                    <Header />
+                    <Views />
+                </BrowserRouter>
+            </CssBaseline>
+        </ThemeProvider>
+
     );
 }
 
