@@ -2,7 +2,9 @@
     text-align: center;
     box-sizing: border-box;
 }
-
+.padIt{
+        margin:20px;
+}
 .btn{
     margin: unset;
 }
