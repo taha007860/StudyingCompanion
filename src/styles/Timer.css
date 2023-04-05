@@ -3,11 +3,32 @@
     margin:30px;
 }
 
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    margin-top: 30px;
+.Minutes{
+    font-size: 50px;
+    margin-left: 40px;
+    color:white;
+}
+.Seconds{
+    font-size: 50px;
+    color:white;
+}
+.TimeInput{
+    border-radius: 10px;
+    background-color: #988F8F;
+    color : white;
+    margin-left: 13px;
+    margin-top: 20px;
+}
+.but-Change{
+    border-radius: 10px;
+    width:40px;
+    background-color: #ffffff;
+    margin-left: 15px;
+    height:20px;
+}
+.but-Change:hover{
+    background-color: #7AB8BF;
+}
+.difficulty{
+    font-size: 20px;
 }
