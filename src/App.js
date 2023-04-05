@@ -1,20 +1,17 @@
 import {BrowserRouter} from 'react-router-dom';
 import Header from './components/Header';
 import Views from "./Views";
-import {CssBaseline, ThemeProvider} from "@mui/material";
-import theme from 'styles/theme';
+import {CssBaseline} from "@mui/material";
 
 function App() {
 
     return (
-        <ThemeProvider theme={theme}>
             <CssBaseline>
                 <BrowserRouter>
                     <Header />
                     <Views />
                 </BrowserRouter>
             </CssBaseline>
-        </ThemeProvider>
 
     );
 }

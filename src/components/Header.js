@@ -2,13 +2,14 @@ import React from 'react';
 import '../styles/Header.css';
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
-import Cookies from 'js-cookie';
+import {auth} from '../config/firebase';
+import {signOut} from 'firebase/auth';
 
 function Header() {
     return (
         <header className='d-flex flex-row'>
             <div>
-                <Link className='logoStyle' to='/Timer'>
+                <Link className='logoStyle' to='/Home'>
                     <p>Studying Companion </p>
                 </Link>
             </div>
@@ -26,8 +27,10 @@ function Header() {
                 </Link>
             </div>
             <div>
-                <Link to='/Login'>
-                    <Button class='btn-lg' variant='secondary' onClick={Cookies.set('login', false)}>
+                <Link to='/auth'>
+                    <Button class='btn-lg' variant='secondary' onClick={ (e) => {
+                        signOut(auth).then(r => console.log("Signed out successfully."));
+                    }}>
                         Logout ←
                     </Button>
                 </Link>
