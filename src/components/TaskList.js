@@ -1,11 +1,12 @@
 import { AlignHorizontalCenter } from '@mui/icons-material';
-import { Avatar, Box, LinearProgress, List, ListItem, ListItemAvatar, ListItemText, Container, Stack, Divider, IconButton, Menu, MenuItem } from '@mui/material';
+import { Avatar, Box, LinearProgress, List, ListItem, ListItemButton, ListItemAvatar, ListItemText, Container, Stack, Divider, IconButton, Menu, MenuItem } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 import {Link} from 'react-router-dom';
 import TaskDetails from './TaskDetails';
-function TaskList({ tasks }) {
+function TaskList(props) {
+  const {tasks, onTaskClick} = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
   const [editing, setEditing] = useState(false);
@@ -13,6 +14,9 @@ function TaskList({ tasks }) {
   const handleClick = (event, task) => {
     setAnchorEl(event.currentTarget);
     setSelectedTask(task);
+  };
+  const handleClickTask = (task) => {
+    onTaskClick(task);
   };
   const handleTaskDetails = (task) => {
     alert(`Task Details for '${task.name}'`);
@@ -54,6 +58,7 @@ function TaskList({ tasks }) {
           spacing={2}
         >  
           {tasks.map((task, index) => (
+            <ListItemButton onClick={() => handleClickTask(task)}>
             <ListItem>
               <ListItemAvatar>
                 <Avatar>{task.name.charAt(0)}</Avatar>
@@ -89,6 +94,7 @@ function TaskList({ tasks }) {
                 <MenuItem onClick={() => handleTaskDetails(task)}>Task Details</MenuItem>
               </Menu>
             </ListItem>
+            </ListItemButton>
           ))}
         </Stack>
       </List>
