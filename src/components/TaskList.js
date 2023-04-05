@@ -3,7 +3,8 @@ import { Avatar, Box, LinearProgress, List, ListItem, ListItemAvatar, ListItemTe
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
-
+import {Link} from 'react-router-dom';
+import TaskDetails from './TaskDetails';
 function TaskList({ tasks }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -13,7 +14,10 @@ function TaskList({ tasks }) {
     setAnchorEl(event.currentTarget);
     setSelectedTask(task);
   };
-
+  const handleTaskDetails = (task) => {
+    alert(`Task Details for '${task.name}'`);
+    handleClose();
+  }
   const handleClose = () => {
     setAnchorEl(null);
     setSelectedTask(null);
@@ -23,12 +27,10 @@ function TaskList({ tasks }) {
     alert(`Share task '${task.name}' with someone`);
     handleClose();
   };
-
   const handleEdit = (task) => {
     setEditing(true);
     handleClose();
   };
-
   const handleDelete = (task) => {
     alert(`Delete task '${task.name}'`);
     handleClose();
@@ -52,7 +54,7 @@ function TaskList({ tasks }) {
           spacing={2}
         >  
           {tasks.map((task, index) => (
-            <ListItem key={index}>
+            <ListItem>
               <ListItemAvatar>
                 <Avatar>{task.name.charAt(0)}</Avatar>
               </ListItemAvatar>
@@ -84,6 +86,7 @@ function TaskList({ tasks }) {
                 <MenuItem onClick={() => handleShare(task)}>Share</MenuItem>
                 <MenuItem onClick={() => handleEdit(task)}>Edit</MenuItem>
                 <MenuItem onClick={() => handleDelete(task)}>Delete</MenuItem>
+                <MenuItem onClick={() => handleTaskDetails(task)}>Task Details</MenuItem>
               </Menu>
             </ListItem>
           ))}
@@ -94,4 +97,3 @@ function TaskList({ tasks }) {
 }
 
 export default TaskList;
-
