@@ -1,13 +1,29 @@
-import React, { useState } from 'react';
-import { auth, googleProvider } from '../config/firebase';
-import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
-import { useNavigate} from "react-router-dom";
-import {Box, Button, Container, TextField, Typography} from "@mui/material";
+import React, {useState} from 'react';
+import {auth, googleProvider} from '../config/firebase';
+import {createUserWithEmailAndPassword, signInWithPopup} from 'firebase/auth';
+import {useNavigate} from "react-router-dom";
+import {
+    Button,
+    Container, FormControl,
+    IconButton,
+    InputAdornment,
+    InputLabel,
+    OutlinedInput,
+    Typography
+} from "@mui/material";
+import GoogleIcon from '@mui/icons-material/Google';
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 export const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = React.useState(false);
     const navigate = useNavigate();
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault();
+    };
 
     const handleSignIn = async () => {
         try {
@@ -36,28 +52,59 @@ export const Login = () => {
             width: '30rem',
             mt: '1rem'
         }}>
-            <Typography variant='h3'>Welcome back!</Typography>
-            <TextField id="outlined-basic" label="Email" variant="outlined" onChange={
-                (e) => {
-                    setEmail(e.target.value)
-            }}/>
-            <TextField id="outlined-basic" label="Password" variant="outlined" onChange={(e) => {
-                setPassword(e.target.value);
-            }} />
-            <Box sx={{
+            <Typography variant='h3' my='1rem'>Welcome back!</Typography>
+            <FormControl sx={{m: 1}} variant="outlined">
+                <InputLabel htmlFor="outlined-email">Email</InputLabel>
+                <OutlinedInput
+                    id="outlined-email"
+                    label="Email"
+                    onChange={
+                        (e) => {
+                            setEmail(e.target.value)
+                        }}
+                />
+            </FormControl>
+            <FormControl sx={{m: 1}} variant="outlined">
+                <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                <OutlinedInput
+                    id="outlined-adornment-password"
+                    type={showPassword ? 'text' : 'password'}
+                    endAdornment={
+                        <InputAdornment position="end">
+                            <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleClickShowPassword}
+                                onMouseDown={handleMouseDownPassword}
+                                edge="end"
+                            >
+                                {showPassword ? <VisibilityOff/> : <Visibility/>}
+                            </IconButton>
+                        </InputAdornment>
+                    }
+                    label="Password"
+                    onChange={(e) => {
+                        setPassword(e.target.value);
+                    }}
+                />
+            </FormControl>
+
+            <Container sx={{
                 display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                width: '30rem',
-                mt: '1rem'
+                flexDirection: 'column',
+                width: '20rem',
+                my: '1rem'
             }}>
-                <Button variant="contained" onClick={handleSignIn}>
+                <Button variant="contained" onClick={handleSignIn} sx={{
+                    m: 1
+                }}>
                     Login
                 </Button>
-                <Button variant="contained" onClick={handleGoogleSignIn}>
-                    Google Login
+                <Button variant="contained" startIcon={<GoogleIcon/>} sx={{
+                    m: 1
+                }} onClick={handleGoogleSignIn}>
+                    Login with Google
                 </Button>
-            </Box>
+            </Container>
 
         </Container>
     )
