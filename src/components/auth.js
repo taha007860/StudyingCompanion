@@ -1,7 +1,7 @@
-import {Button} from "react-bootstrap";
 import '../styles/App.css';
 import {Link} from "react-router-dom";
 import Cookies from 'js-cookie';
+import {Button, Container, Typography} from "@mui/material";
 
 const Auth = () => {
     const handleGuest = () => {
@@ -9,31 +9,45 @@ const Auth = () => {
     }
 
     return (
-        <div className='loginContainer'>
-            <p className='text-center fs-2 my-1'>Welcome!</p>
-            <div>
-                <div className='d-flex justify-content-between mb-1'>
+        <Container sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            alignSelf: 'center',
+            justifyContent: 'center',
+            minHeight: '40vh',
+            width: '25rem'
+        }}>
+            <Typography align='center' variant='h2' my='1rem'>Welcome!</Typography>
+            <Container>
+                <Container sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    mb: '1rem'
+                }} >
                     <Link to='/auth/Login'>
-                        <Button className='btn-lg'>
+                        <Button variant="contained">
                             Login
                         </Button>
                     </Link>
                     <Link to='/auth/Signup'>
-                        <Button className='btn-lg'>
+                        <Button variant="contained">
                             Sign Up
                         </Button>
                     </Link>
-                </div>
-                <div>
+                </Container>
+                <Container>
                     <Link to='/Timer'>
-                      <Button className='btn-lg btn-secondary w-100' onClick={handleGuest}>
+                      <Button variant="contained" color="secondary" onClick={handleGuest} sx={{
+                            width: '100%'
+                      }}>
                         Continue as Guest
                         </Button>
                     </Link>
-                </div>
-            </div>
-        </div>
-
+                </Container>
+            </Container>
+        </Container>
     );
 }
 
