@@ -13,7 +13,7 @@ export const Login = () => {
         try {
             await createUserWithEmailAndPassword(auth, email, password).then(
                 navigate('/Timer')
-            ); // logic that checks for a valid email needs to be implemented
+            ); // logic that checks for a valid email needs to be implemented, just joseph
         } catch (e) {
             console.error(e);
         }
