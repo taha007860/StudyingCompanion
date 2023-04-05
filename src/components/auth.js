@@ -1,12 +1,9 @@
-import {useState} from "react";
 import {Button} from "react-bootstrap";
 import '../styles/App.css';
 import {Link} from "react-router-dom";
 import Cookies from 'js-cookie';
 
-const LoginScreen = () => {
-    const [token, SetToken] = useState(undefined);
-
+const Auth = () => {
     const handleGuest = () => {
         Cookies.set("login", true)
     }
@@ -16,12 +13,16 @@ const LoginScreen = () => {
             <p className='text-center fs-2 my-1'>Welcome!</p>
             <div>
                 <div className='d-flex justify-content-between mb-1'>
-                    <Button className='btn-lg'>
-                        Login
-                    </Button>
-                    <Button className='btn-lg'>
-                        Sign Up
-                    </Button>
+                    <Link to='/auth/Login'>
+                        <Button className='btn-lg'>
+                            Login
+                        </Button>
+                    </Link>
+                    <Link to='/auth/Signup'>
+                        <Button className='btn-lg'>
+                            Sign Up
+                        </Button>
+                    </Link>
                 </div>
                 <div>
                     <Link to='/Timer'>
@@ -36,4 +37,4 @@ const LoginScreen = () => {
     );
 }
 
-export default LoginScreen;
+export default Auth;

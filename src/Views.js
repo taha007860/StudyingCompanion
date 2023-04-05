@@ -1,8 +1,11 @@
 import {Navigate, Route, Routes} from "react-router-dom";
-import LoginScreen from "./auth/LoginScreen";
-import ProtectedRoute from "./auth/ProtectedRoute";
+import Auth from "./components/auth";
+import ProtectedRoute from "./components/ProtectedRoute";
 import TaskList from "./components/TaskList";
 import Timer from "./components/Timer";
+import {Signup} from "./components/Signup";
+import {Login} from "./components/Login";
+import {Home} from './components/Home';
 
 const handle404 = () => {
     return (
@@ -12,12 +15,16 @@ const handle404 = () => {
 const Views = () => {
     return (
         <Routes>
-            <Route index element={<Navigate to='/Login' /> } />
-            <Route path="/Login" element={<LoginScreen />} />
+            <Route index element={<Navigate to='/Home' />} />
+            <Route path="/auth">
+                <Route index element={<Auth />} />
+                <Route path='Login' element={<Login />} />
+                <Route path='Signup' element={<Signup />} />
+            </Route>
+            <Route path='/Home' element={<Home />} />
             <Route element={<ProtectedRoute />}>
-
-                <Route path="/TaskList" element={<TaskList />}/>
-                <Route path="/Timer" element={<Timer />}/>
+                <Route path="/TaskList" element={<TaskList />} />
+                <Route path="/Timer" element={<Timer />} />
             </Route>
             <Route path="*" element={handle404()} />
         </Routes>
