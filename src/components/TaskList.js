@@ -1,189 +1,167 @@
-import React, {useEffect, useState} from "react";
-import '../styles/TaskList.css';
+import { AlignHorizontalCenter } from "@mui/icons-material";
+import {
+	Avatar,
+	Box,
+	LinearProgress,
+	List,
+	ListItem,
+	ListItemButton,
+	ListItemAvatar,
+	ListItemText,
+	Container,
+	Stack,
+	Divider,
+	IconButton,
+	Menu,
+	MenuItem,
+} from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import AddIcon from "@mui/icons-material/Add";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import TaskDetails from "./TaskDetails";
 
 function TaskList() {
-    const [tasks, setTasks] = useState([
-        {
-            name: 'Task 1',
-            description: 'Lorem ipsum dolor sit amet',
-            dueDate: '2023-03-22',
-            priority: 'High',
-            status: 'In Progress'
-        },
-        {
-            name: 'Task 2',
-            description: 'consectetur adipiscing elit',
-            dueDate: '2023-03-25',
-            priority: 'Low',
-            status: 'In Progress'
-        },
-        {
-            name: 'Task 3',
-            description: 'sed do eiusmod tempor',
-            dueDate: '2023-03-27',
-            priority: 'Medium',
-            status: 'Not Started'
-        }
-    ]);
+	const [anchorEl, setAnchorEl] = useState(null);
+	const [editing, setEditing] = useState(false);
+	const tasks = [
+		{
+			name: "Task 1",
+			progress: 50,
+			status: "Not completed",
+			date: "4/6/2023",
+			description: "Lorem ipstum",
+			sharedWith: ["User 1", "User 2"],
+		},
+		{
+			name: "Task 2",
+			progress: 25,
+			status: "Not completed",
+			date: "4/6/2023",
+			description: "Lorem ipstum",
+			sharedWith: ["User 3", "User 4"],
+		},
+		{
+			name: "Task 3",
+			progress: 75,
+			status: "Not completed",
+			date: "4/6/2023",
+			description: "Lorem ipstum",
+			sharedWith: ["User 1", "User 4"],
+		},
+	]; // Dummy data, will be changed
+	const handleClick = (event, task) => {
+		setAnchorEl(event.currentTarget);
+	};
+	const handleTaskDetails = (task) => {
+		alert(`Task Details for '${task.name}'`);
+		handleClose();
+	};
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
 
-    const [filterType, setFilterType] = useState("status");
-    const [filterValue, setFilterValue] = useState("");
-    const [filteredTasks, setFilteredTasks] = useState(null);
+	const handleShare = (task) => {
+		alert(`Share task '${task.name}' with someone`);
+		handleClose();
+	};
+	const handleEdit = (task) => {
+		setEditing(true);
+		handleClose();
+	};
+	const handleDelete = (task) => {
+		alert(`Delete task '${task.name}'`);
+		handleClose();
+	};
 
-    const [editTaskIndex, setEditTaskIndex] = useState(-1);
-    const [editedTask, setEditedTask] = useState({});
-
-    useEffect(() => {
-        const filteredTasks = tasks.filter((task) => {
-            if (filterValue.trim() === "") {
-                return true;
-            }
-
-            if (filterType === "status") {
-                return task.status.toLowerCase().includes(filterValue.toLowerCase());
-            } else if (filterType === "priority") {
-                return task.priority.toLowerCase().includes(filterValue.toLowerCase());
-            } else if (filterType === "name") {
-                return task.name.toLowerCase().includes(filterValue.toLowerCase());
-            } else if (filterType === "description") {
-                return task.description.toLowerCase().includes(filterValue.toLowerCase());
-            }
-
-            return false;
-        });
-
-        setFilteredTasks(filteredTasks.length > 0 ? filteredTasks : null);
-    }, [filterType, filterValue, tasks]);
-
-    const handleFilterTypeChange = (event) => {
-        setFilterType(event.target.value);
-        setFilterValue("");
-        setFilteredTasks(null);
-    };
-
-    const handleFilterValueChange = (event) => {
-        setFilterValue(event.target.value);
-    };
-
-    const handleClearFilter = () => {
-        setFilterType("status");
-        setFilterValue("");
-        setFilteredTasks(null);
-    };
-
-    const handleEditTask = (index, task) => {
-        setEditTaskIndex(index);
-        setEditedTask(task);
-    };
-
-    const handleSaveTask = (index) => {
-        const newTasks = [...tasks];
-        newTasks[index] = editedTask;
-        setTasks(newTasks);
-        setEditTaskIndex(-1);
-    };
-
-    const handleCancelEdit = () => {
-        setEditTaskIndex(-1);
-        setEditedTask({});
-    };
-
-    const handleInputChange = (event) => {
-        const {name, value} = event.target;
-        setEditedTask((prevTask) => ({...prevTask, [name]: value}));
-    };
-
-    const deleteTask = (index) => {
-        const newTasks = [...tasks];
-        newTasks.splice(index, 1);
-        setTasks(newTasks);
-    };
-
-    const filteredList = filteredTasks ? filteredTasks : tasks;
-
-    return (
-        <div class='m-3'>
-            <h2 className="task mt-3">Task List</h2>
-
-            <label htmlFor="filter-type">Filter By:</label>
-            <select id="filter-type" value={filterType} onChange={handleFilterTypeChange}>
-                <option value="status">Status</option>
-                <option value="priority">Priority</option>
-                <option value="name">Name</option>
-                <option value="description">Description</option>
-            </select>
-
-            <label htmlFor="filter-value">Filter Value:</label>
-            <input id="filter-value" type="text" value={filterValue} onChange={handleFilterValueChange}/>
-
-            <button onClick={handleClearFilter}>Clear Filter</button>
-
-            <table>
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Due Date</th>
-                    <th>Priority</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {filteredList.map((task, index) => (
-                    <tr key={index}>
-                        {editTaskIndex === index ? (
-                            <React.Fragment>
-                                <td>
-                                    <input type="text" name="name" value={editedTask.name}
-                                           onChange={handleInputChange}/>
-                                </td>
-                                <td>
-                                    <input type="text" name="description" value={editedTask.description}
-                                           onChange={handleInputChange}/>
-                                </td>
-                                <td>
-                                    <input type="date" name="dueDate" value={editedTask.dueDate}
-                                           onChange={handleInputChange}/>
-                                </td>
-                                <td>
-                                    <select name="priority" value={editedTask.priority} onChange={handleInputChange}>
-                                        <option value="Low">Low</option>
-                                        <option value="Medium">Medium</option>
-                                        <option value="High">High</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select name="status" value={editedTask.status} onChange={handleInputChange}>
-                                        <option value="Not Started">Not Started</option>
-                                        <option value="In Progress">In Progress</option>
-                                        <option value="Completed">Completed</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <button onClick={() => handleSaveTask(index)}>Save</button>
-                                    <button onClick={handleCancelEdit}>Cancel</button>
-                                </td>
-                            </React.Fragment>
-                        ) : (
-                            <React.Fragment>
-                                <td>{task.name}</td>
-                                <td>{task.description}</td>
-                                <td>{task.dueDate}</td>
-                                <td>{task.priority}</td>
-                                <td>{task.status}</td>
-                                <td>
-                                    <button onClick={() => handleEditTask(index, task)}>Edit</button>
-                                    <button onClick={() => deleteTask(index)}>Delete</button>
-                                </td>
-                            </React.Fragment>
-                        )}
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-        </div>
-    );
+	return (
+		<Container
+			maxWidth="sm"
+			sx={{
+				backgroundColor: "#e3f2fd",
+				border: "1px solid primary.main",
+				borderRadius: 4,
+				boxShadow: 2,
+				marginTop: "2.5rem",
+			}}
+		>
+			<Box
+				sx={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+					py: 2,
+					px: 3,
+				}}
+			>
+				<div>
+					<h4>In Progress</h4>
+					<h6>3 tasks active</h6>
+				</div>
+				<IconButton>
+					<AddIcon /> Add task
+				</IconButton>
+			</Box>
+			<List sx={{ width: "100%", maxWidth: 560, bgcolor: "background.paper" }}>
+				<Stack
+					direction="column"
+					divider={<Divider orientation="vertical" />}
+					spacing={2}
+				>
+					{tasks.map((task, index) => (
+						<ListItemButton>
+							<ListItem>
+								<ListItemAvatar>
+									<Avatar>{task.name.charAt(0)}</Avatar>
+								</ListItemAvatar>
+								<ListItemText
+									primary={task.name}
+									secondary={
+										<Box
+											sx={{
+												display: "flex",
+												alignItems: "center",
+												flexDirection: "column",
+											}}
+										>
+											<Box sx={{ mb: 1, ml: -10 }}>shared with</Box>
+											<Box
+												sx={{ display: "flex", alignItems: "center", ml: -10 }}
+											>
+												{task.sharedWith.map((user, index) => (
+													<Avatar
+														key={index}
+														sx={{ ml: 1 }}
+														alt={user}
+														src={`https://i.pravatar.cc/32?u=${user}`}
+													/>
+												))}
+											</Box>
+										</Box>
+									}
+									sx={{ ml: 2, mt: 1 }}
+								/>
+								<Box width={200} ml={6} mr={4}>
+									<LinearProgress variant="determinate" value={task.progress} />
+								</Box>
+								<IconButton onClick={(event) => handleClick(event, task)}>
+									<MoreVertIcon />
+								</IconButton>
+								<Menu anchorEl={anchorEl} onClose={handleClose}>
+									<MenuItem onClick={() => handleShare(task)}>Share</MenuItem>
+									<MenuItem onClick={() => handleEdit(task)}>Edit</MenuItem>
+									<MenuItem onClick={() => handleDelete(task)}>Delete</MenuItem>
+									<MenuItem onClick={() => handleTaskDetails(task)}>
+										Task Details
+									</MenuItem>
+								</Menu>
+							</ListItem>
+						</ListItemButton>
+					))}
+				</Stack>
+			</List>
+		</Container>
+	);
 }
 
 export default TaskList;

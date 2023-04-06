@@ -1,10 +1,10 @@
-import {BrowserRouter} from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import Header from './components/Header';
 import Views from "./Views";
-import {CssBaseline} from "@mui/material";
+import { CssBaseline } from "@mui/material";
 
 function App() {
-
+ 
     return (
             <CssBaseline>
                 <BrowserRouter>
@@ -12,7 +12,6 @@ function App() {
                     <Views />
                 </BrowserRouter>
             </CssBaseline>
-
     );
 }
 
