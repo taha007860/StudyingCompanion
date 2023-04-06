@@ -132,7 +132,7 @@ label {
     font-weight: 500;
 }
 
-.logoStyle,logoStyle:hover{
+.logoStyle, logoStyle:hover {
     text-decoration: none;
     font-weight: bold;
     font-size: 2rem;

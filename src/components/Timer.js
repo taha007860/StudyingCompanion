@@ -1,14 +1,16 @@
 import React, {useEffect, useState} from "react";
-import {Box,TextField,MenuItem,Button} from '@mui/material'
+import {Box, Button, Grid} from '@mui/material'
 import '../styles/App.css';
+import '../styles/Timer.css';
 const Timer = () => {
-    const studLevels = ["Custom","One","Two","Three","Four","Five"];
+    const [active, setActive] = useState("");
     const [level , setLevel] = useState("0");
     const [disabled,setDisabled] = useState(false);
     const [inputTime, setInputTime] = useState("0:00");     //Initialise time to 0:00 to show format for user
     const [timerRunning, setTimerRunning] = useState(false);
     const [countdown, setCountdown] = useState(false);
     const [breakTime, setBreakTime] = useState("0:00");
+    const [Customed , setCustomed] = useState(false);
     const [timeLeft, setTimeLeft] = useState({
         minutes: 0,
         seconds: 0,
@@ -33,7 +35,7 @@ const Timer = () => {
                     seconds: timeLeft.seconds > 0 ? timeLeft.seconds - 1 : 59,
                 });
             }, 1000);
-        } else if (timerRunning && countdown && timeLeft.minutes === 0 && timeLeft.seconds === 0) {
+        } else if (!Customed &&timerRunning && countdown && timeLeft.minutes === 0 && timeLeft.seconds === 0) {
             // Timer has ended, reset to break time
             setCountdown(false);
             setInputTime(breakTime);
@@ -45,7 +47,7 @@ const Timer = () => {
             setTimerRunning(false);
             return () => clearTimeout(timer);
         }
-    }, [timeLeft, timerRunning, countdown, breakTime]);
+    }, [timeLeft, timerRunning, countdown, breakTime,Customed]);
 
     const handleInputChange = (event) => {
         setInputTime(event.target.value);
@@ -60,8 +62,40 @@ const Timer = () => {
     };
 
 
-    const handleSelectChange = (event) =>{
-        setLevel((event.target.value));
+
+
+    const handleDifficulty = (event) =>{
+        switch(event){
+            case "novice":
+                setLevel("One")
+                if(active !== "novice")
+                setActive("novice")
+                else {
+                    setActive("")
+                    setLevel("Custom")
+                }
+                break;
+            case "apprentice" :
+                setLevel("Two")
+                if(active !== "apprentice")
+                    setActive("apprentice")
+                else {
+                    setActive("")
+                    setLevel("Custom")
+                }
+
+                break;
+            case "expert" :
+                setLevel("Three")
+                if(active !== "expert")
+                    setActive("expert")
+                else {
+                    setActive("")
+                    setLevel("Custom")}
+                break;
+            default :
+                break;
+        }
     }
 
     useEffect(() =>{
@@ -69,26 +103,22 @@ const Timer = () => {
             case "Custom":
                 setDisabled(true);
                 setInputTime("0:00");
+                setCustomed(true);
                 break;
             case "One":
                 setInputTime("25:00");
                 setBreakTime("5:00");
+                setCustomed(false);
                 break;
             case "Two":
                 setInputTime("50:00");
                 setBreakTime("10:00");
+                setCustomed(false);
                 break;
             case "Three":
                 setInputTime("75:00");
                 setBreakTime("15:00");
-                break;
-            case "Four":
-                setInputTime("90:00");
-                setBreakTime("20:00");
-                break;
-            case "Five":
-                setInputTime("115:00");
-                setBreakTime("25:00");
+                setCustomed(false);
                 break;
             default:
                 setInputTime("0:00");
@@ -99,53 +129,78 @@ const Timer = () => {
         },[level]);
 
     return (
-        <div className= "Marge">
-            <form >
+        <div>
+            <Box sx={{
+                backgroundColor: '#D9D9D9',
+                height : '300px',
+                width : '600px',
+                mx : 'auto',
+                mt : '50px',
+            }}>
+                <div>
+                    <Box sx={{
+                        mx:'200px',
 
-            <Box width="200px" htmlFor="level" className="padIt">
+                    }}>
+                        <input
+                            className= 'TimeInput'
+                            disabled={!disabled}
+                            placeholder='Enter Time'
+                            value={inputTime}
+                            onChange={handleInputChange}
+                            />
+                        <Grid mt = '50px' display = 'flex' mb = '50px'>
+                            <div className="Minutes" >{timeLeft.minutes}</div>
+                            <div className="Seconds">:{timeLeft.seconds < 10 ? `0${timeLeft.seconds}` : timeLeft.seconds}</div>
+                        </Grid >
+                        {countdown && timeLeft.minutes === 0 && timeLeft.seconds === 0  && (<div>Take a break, u deserve it!</div>)}
+                        <div className='d-flex column-gap-5'>
+                        <Button variant = 'contained' size = "medium" color = 'success' onClick={handleStartClick} disabled={timerRunning}>
+                            Start
+                        </Button>
 
-                <TextField
-                     label = 'Select Pomodoro Level'
-                     select
-                     fullWidth
-                     id = "level"
-                     value = {level}
-                     onChange={handleSelectChange}
-                     disabled={timerRunning}
-                >
-                    {studLevels.map((level) => (
-                        <MenuItem key = {level} value = {level}>
-                            {level}
-                        </MenuItem>
-                    ))}
-                </TextField>
-            </Box>
-            </form>
-            <div>
-            <div className="container m-3 ">
-                <input
-                    disabled={!disabled}
-                    size="small"
-                    placeholder='Enter Time'
-                    value={inputTime}
-                    onChange={handleInputChange}
-                    />
-                <h1 className="TimeLeft">
-                    <div className="Minutes">{timeLeft.minutes}</div>
-                    <div className="Seconds">{timeLeft.seconds < 10 ? `0${timeLeft.seconds}` : timeLeft.seconds}</div>
-                </h1>
-                {countdown && timeLeft.minutes === 0 && timeLeft.seconds === 0 && (<div>Take a break, u deserve it!</div>)}
-                <div className='d-flex column-gap-4'>
-                <Button variant = 'contained' size = "medium" color = 'success' onClick={handleStartClick} disabled={timerRunning}>
-                    Start
-                </Button>
-
-                <Button variant = 'contained' size = "large" color = 'error' onClick={handleEndClick} disabled={!timerRunning}>
-                    End
-                </Button>
+                        <Button variant = 'contained' size = "large" color = 'error' onClick={handleEndClick} disabled={!timerRunning}>
+                            End
+                        </Button>
+                        </div>
+                    </Box>
                 </div>
-            </div>
-            </div>
+            </Box>
+            <Box sx={{
+                backgroundColor: '#D9D9D9',
+                height : '100px',
+                width : '600px',
+                mx : 'auto',
+                mt : '50px',
+            }}>
+                <Grid container mt = '50px' display = 'flex' mb = '50px' columnSpacing={25}>
+                    <Grid item xs={4}>
+                       <button className="but-Change"  onClick={()=> handleDifficulty("novice")}    style={{ backgroundColor: active === "novice" ? "#7AB8BF" : "white" }}>
+
+                       </button>
+                       <div className="difficulty">
+                                Novice
+                       </div>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <button className="but-Change" onClick={()=> handleDifficulty("apprentice")} style={{ backgroundColor: active === "apprentice" ? "#7AB8BF" : "white"}}>
+
+                        </button>
+                        <div className="difficulty">
+                                Apprentice
+                        </div>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <button className="but-Change" onClick={()=> handleDifficulty("expert")}   style={{ backgroundColor: active === "expert" ? "#7AB8BF" : "white"}}>
+
+                        </button>
+                        <div className="difficulty">
+                                Expert
+                        </div>
+                    </Grid>
+
+                </Grid>
+            </Box>
         </div>
 
     );}
