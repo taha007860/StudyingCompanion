@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { auth, googleProvider } from "../config/firebase";
-import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import {
 	Alert,
@@ -29,7 +29,7 @@ export const Login = () => {
 	};
 
 	const handleSignIn = async () => {
-		await createUserWithEmailAndPassword(auth, email, password)
+		await signInWithEmailAndPassword(auth, email, password)
 			.then((p) => {
 				p.then(navigate("/Timer"));
 			})
