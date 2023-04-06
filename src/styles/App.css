@@ -1,25 +1,27 @@
-/*. {*/
-/*    text-align: center;*/
-/*    box-sizing: border-box;*/
-/*}*/
-/*.padIt{*/
-/*        margin:20px;*/
-/*}*/
-/*.btn{*/
-/*    margin: unset;*/
-/*}*/
+. {
+    text-align: center;
+    box-sizing: border-box;
+}
 
-/*.loginContainer{*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    align-items: center;*/
-/*    align-self: center;*/
-/*    justify-content: center;*/
-/*    min-height: 50vh;*/
-/*}*/
+.padIt {
+    margin: 20px;
+}
 
-/*.welcomeText{*/
-/*    font-size: 2rem;*/
-/*}*/
+.btn {
+    margin: unset;
+}
+
+.loginContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: center;
+    justify-content: center;
+    min-height: 50vh;
+}
+
+.welcomeText {
+    font-size: 2rem;
+}
 
 
