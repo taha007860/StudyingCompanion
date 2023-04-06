@@ -40,7 +40,9 @@ export const Login = () => {
 
 	const handleGoogleSignIn = async () => {
 		try {
-			await signInWithPopup(auth, googleProvider);
+			await signInWithPopup(auth, googleProvider).then((e) => {
+				e.then(navigate("/Timer"));
+			});
 		} catch (e) {
 			console.error(e);
 		}
