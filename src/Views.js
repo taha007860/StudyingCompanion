@@ -7,7 +7,7 @@ import { Signup } from "./components/Signup";
 import { Login } from "./components/Login";
 import { Home } from "./components/Home";
 import { Account } from "./components/Account";
-
+import TaskDetails from "./components/TaskDetails";
 const handle404 = () => {
 	return (
 		<p className="d-flex align-self-center justify-content-center fs-1 fw-bold">
