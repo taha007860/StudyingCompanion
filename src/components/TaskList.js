@@ -14,6 +14,7 @@ import {
 	IconButton,
 	Menu,
 	MenuItem,
+	Typography
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
@@ -24,7 +25,10 @@ import TaskDetails from "./TaskDetails";
 function TaskList() {
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [editing, setEditing] = useState(false);
-	const tasks = [
+	const [counter, setCounter] = useState(4);
+	const [name, setName] = useState("");
+	const [sharedWith, setSharedWith] = useState([]);
+	const [tasks, setTasks] = useState([
 		{
 			name: "Task 1",
 			progress: 50,
@@ -49,29 +53,49 @@ function TaskList() {
 			description: "Lorem ipstum",
 			sharedWith: ["User 1", "User 4"],
 		},
-	]; // Dummy data, will be changed
+	]);
+
 	const handleClick = (event, task) => {
 		setAnchorEl(event.currentTarget);
 	};
+
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
+
 	const handleTaskDetails = (task) => {
 		alert(`Task Details for '${task.name}'`);
 		handleClose();
-	};
-	const handleClose = () => {
-		setAnchorEl(null);
 	};
 
 	const handleShare = (task) => {
 		alert(`Share task '${task.name}' with someone`);
 		handleClose();
 	};
+
 	const handleEdit = (task) => {
 		setEditing(true);
+		setName(task.name);
+		setSharedWith(task.sharedWith);
 		handleClose();
 	};
+
 	const handleDelete = (task) => {
 		alert(`Delete task '${task.name}'`);
 		handleClose();
+	};
+
+	const handleAddTask = () => {
+		const newTask = {
+			name: `Task ${counter}`,
+			progress: 25,
+			status: "Not completed",
+			date: "4/7/2023",
+			description: "",
+			sharedWith: ["User 1", "User 4"],
+		};
+		setTasks([...tasks, newTask]);
+		setCounter(counter + 1);
 	};
 
 	return (
@@ -96,23 +120,51 @@ function TaskList() {
 			>
 				<div>
 					<h4>In Progress</h4>
-					<h6>3 tasks active</h6>
+					<p>3 tasks</p>
 				</div>
-				<IconButton>
-					<AddIcon /> Add task
+				<IconButton
+					size="large"
+					aria-label="add task"
+					onClick={handleAddTask}
+				>
+					<AddIcon />
 				</IconButton>
 			</Box>
-			<List sx={{ width: "100%", maxWidth: 560, bgcolor: "background.paper" }}>
-				<Stack
-					direction="column"
-					divider={<Divider orientation="vertical" />}
-					spacing={2}
-				>
-					{tasks.map((task, index) => (
-						<ListItemButton>
-							<ListItem>
+			<Divider />
+			<List
+				sx={{
+					width: "100%",
+					maxWidth: 560,
+					bgcolor: "background.paper",
+				}}
+			>
+				{tasks.map((task) => (
+					<>
+						<ListItem
+							key={task.name}
+							secondaryAction={
+								<IconButton
+									edge="end"
+									aria-label="options"
+									onClick={(e) => handleClick(e, task)}
+								>
+									<MoreVertIcon />
+								</IconButton>
+							}
+						>
+							<ListItemButton
+								component={Link}
+								to={`/task/${task.name}`}
+							>
 								<ListItemAvatar>
-									<Avatar>{task.name.charAt(0)}</Avatar>
+									<Avatar
+										sx={{
+											bgcolor: "primary.main",
+											color: "primary.contrastText",
+										}}
+									>
+										{task.name[0]}
+									</Avatar>
 								</ListItemAvatar>
 								<ListItemText
 									primary={task.name}
@@ -124,9 +176,9 @@ function TaskList() {
 												flexDirection: "column",
 											}}
 										>
-											<Box sx={{ mb: 1, ml: -10 }}>shared with</Box>
+											<Box sx={{ mb: 1, ml: -18 }}>shared with</Box>
 											<Box
-												sx={{ display: "flex", alignItems: "center", ml: -10 }}
+												sx={{ display: "flex", alignItems: "center", ml: -17 }}
 											>
 												{task.sharedWith.map((user, index) => (
 													<Avatar
@@ -138,30 +190,42 @@ function TaskList() {
 												))}
 											</Box>
 										</Box>
-									}
-									sx={{ ml: 2, mt: 1 }}
-								/>
-								<Box width={200} ml={6} mr={4}>
-									<LinearProgress variant="determinate" value={task.progress} />
-								</Box>
-								<IconButton onClick={(event) => handleClick(event, task)}>
-									<MoreVertIcon />
-								</IconButton>
-								<Menu anchorEl={anchorEl} onClose={handleClose}>
-									<MenuItem onClick={() => handleShare(task)}>Share</MenuItem>
-									<MenuItem onClick={() => handleEdit(task)}>Edit</MenuItem>
-									<MenuItem onClick={() => handleDelete(task)}>Delete</MenuItem>
-									<MenuItem onClick={() => handleTaskDetails(task)}>
-										Task Details
-									</MenuItem>
-								</Menu>
-							</ListItem>
-						</ListItemButton>
-					))}
-				</Stack>
+										}
+										sx={{ ml: 2, mt: 1 }}
+									/>
+										<Stack
+											direction="row"
+											alignItems="center"
+											spacing={1}
+										>
+											<LinearProgress
+												variant="determinate"
+												value={task.progress}
+												sx={{ width: 100 }}
+											/>
+											<Typography variant="body2" color="text.secondary">
+												{`${task.progress}%`}
+											</Typography>
+											</Stack>
+							</ListItemButton>
+						</ListItem>
+						<Divider />
+					</>
+				))}
 			</List>
+			<Menu
+				id="simple-menu"
+				anchorEl={anchorEl}
+				keepMounted
+				open={Boolean(anchorEl)}
+				onClose={handleClose}
+			>
+				<MenuItem onClick={() => handleTaskDetails()}>Task Details</MenuItem>
+				<MenuItem onClick={() => handleShare()}>Share</MenuItem>
+				<MenuItem onClick={() => handleEdit()}>Edit</MenuItem>
+				<MenuItem onClick={() => handleDelete()}>Delete</MenuItem>
+			</Menu>
 		</Container>
 	);
 }
-
 export default TaskList;

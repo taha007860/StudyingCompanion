@@ -1,72 +1,57 @@
-import React, {useState} from 'react';
-import '../styles/TaskForm.css';
+import { useState } from "react";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 
-function TaskForm(props) {
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [date, setDate] = useState('');
-    const [status, setStatus] = useState('');
-    const [showAddTaskForm, setShowAddTaskForm] = useState(false);
+function TaskForm({ open, onClose, onSubmit, initialValues }) {
+  const [name, setName] = useState(initialValues.name);
+  const [sharedWith, setSharedWith] = useState(initialValues.sharedWith);
 
-    const handleShowAddTaskForm = () => {
-        setShowAddTaskForm(true);
-    };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    onSubmit({ name, sharedWith });
+    onClose();
+  };
 
-    const handleCloseAddTaskForm = () => {
-        setShowAddTaskForm(false);
-    };
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const newTask = {
-            name,
-            description,
-            date,
-            status
-        };
-        props.onAddTask(newTask);
-        setName('');
-        setDescription('');
-        setDate('');
-        setStatus('');
-    };
-
-    return (
-        <form onSubmit={handleSubmit}>
-            <button className={showAddTaskForm ? 'hide' : ''} onClick={handleShowAddTaskForm}>Add Task +</button>
-            <label>
-                Name:
-                <input type="text" value={name} onChange={(event) => setName(event.target.value)}/>
-            </label>
-            <label>
-                Description:
-                <input type="text" value={description} onChange={(event) => setDescription(event.target.value)}/>
-            </label>
-            <label>
-                Date:
-                <input type="date" value={date} onChange={(event) => setDate(event.target.value)}/>
-            </label>
-            <label>
-                Status:
-                <select value={status || 'Not Started'} onChange={(event) => setStatus(event.target.value)}>
-                    <option value="Not Started">Not Started</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                </select>
-            </label>
-            <input type="submit" value="Submit"/>
-        </form>
-
-    // {showAddTaskForm && (
-    //     <div className="modal">
-    //         <div className="modal-content">
-    //             <span className="close" onClick={handleCloseAddTaskForm}>&times;</span>
-    //             <TaskForm onAddTask={() => {
-    //             }}/>
-    //         </div>
-    //     </div>
-    // )}
-    );
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Edit Task</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Update the task name and shared with list.
+        </DialogContentText>
+        <Box component="form" onSubmit={handleSubmit}>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Task Name"
+            fullWidth
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Shared With"
+            fullWidth
+            value={sharedWith.join(",")}
+            onChange={(event) =>
+              setSharedWith(event.target.value.split(","))
+            }
+          />
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleSubmit}>Save</Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
-
 export default TaskForm;
