@@ -1,14 +1,13 @@
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Views from "./Views";
 import { CssBaseline } from "@mui/material";
 function App() {
- 
     return (
             <CssBaseline>
                 <BrowserRouter>
                     <Header />
-                    <Views />
+                    <Views/> 
                 </BrowserRouter>
             </CssBaseline>
     );

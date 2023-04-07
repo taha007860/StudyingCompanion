@@ -7,7 +7,6 @@ import { Signup } from "./components/Signup";
 import { Login } from "./components/Login";
 import { Home } from "./components/Home";
 import { Account } from "./components/Account";
-import TaskDetails from "./components/TaskDetails";
 const handle404 = () => {
 	return (
 		<p className="d-flex align-self-center justify-content-center fs-1 fw-bold">
@@ -15,7 +14,16 @@ const handle404 = () => {
 		</p>
 	);
 };
+
 const Views = () => {
+	const task = {
+		name: "Task 1",
+				progress: 50,
+				status: "Not completed",
+				date: "4/6/2023",
+				description: "Lorem ipstum",
+				sharedWith: ["User 1", "User 2"]
+		}
 	return (
 		<Routes>
 			<Route index element={<Navigate to="/Home" />} />

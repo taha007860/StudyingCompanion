@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
-import { useState } from "react";
+import { useState} from "react";
 import { Link } from "react-router-dom";
 import TaskDetails from "./TaskDetails";
 
@@ -62,7 +62,6 @@ function TaskList() {
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
-
 	const handleTaskDetails = (task) => {
 		alert(`Task Details for '${task.name}'`);
 		handleClose();
@@ -83,8 +82,7 @@ function TaskList() {
 	const handleDelete = (task) => {
 		alert(`Delete task '${task.name}'`);
 		handleClose();
-	};
-
+	};  
 	const handleAddTask = () => {
 		const newTask = {
 			name: `Task ${counter}`,
@@ -153,9 +151,8 @@ function TaskList() {
 							}
 						>
 							<ListItemButton
-								component={Link}
-								to={`/task/${task.name}`}
 							>
+						     
 								<ListItemAvatar>
 									<Avatar
 										sx={{
@@ -228,4 +225,5 @@ function TaskList() {
 		</Container>
 	);
 }
-export default TaskList;
+export default TaskList;												
+

@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button, Container, Typography } from "@mui/material";
 import { auth } from "../config/firebase";
 import { signInAnonymously } from "firebase/auth";
-
 const Auth = () => {
 	const navigate = useNavigate();
 	const handleGuest = async () => {
