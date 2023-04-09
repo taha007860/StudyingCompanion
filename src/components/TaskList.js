@@ -21,39 +21,14 @@ import AddIcon from "@mui/icons-material/Add";
 import { useState} from "react";
 import { Link } from "react-router-dom";
 import TaskDetails from "./TaskDetails";
-
+import defaultTasks from "./defaultTasks";
 function TaskList() {
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [editing, setEditing] = useState(false);
 	const [counter, setCounter] = useState(4);
 	const [name, setName] = useState("");
 	const [sharedWith, setSharedWith] = useState([]);
-	const [tasks, setTasks] = useState([
-		{
-			name: "Task 1",
-			progress: 50,
-			status: "Not completed",
-			date: "4/6/2023",
-			description: "Lorem ipstum",
-			sharedWith: ["User 1", "User 2"],
-		},
-		{
-			name: "Task 2",
-			progress: 25,
-			status: "Not completed",
-			date: "4/6/2023",
-			description: "Lorem ipstum",
-			sharedWith: ["User 3", "User 4"],
-		},
-		{
-			name: "Task 3",
-			progress: 75,
-			status: "Not completed",
-			date: "4/6/2023",
-			description: "Lorem ipstum",
-			sharedWith: ["User 1", "User 4"],
-		},
-	]);
+	const [tasks, setTasks] = useState(defaultTasks);
 
 	const handleClick = (event, task) => {
 		setAnchorEl(event.currentTarget);
