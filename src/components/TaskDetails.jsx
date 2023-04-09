@@ -1,31 +1,10 @@
 import { useState, useEffect } from "react";
-import { Button, Modal, Select, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-
-function TaskDetails() {
+import { Button, Modal, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Email, Facebook, Twitter, Instagram } from "@mui/icons-material";
+import defaultTasks from "./defaultTasks";
+function TaskDetails() { 
   // Setting up state for tasks, filter type and value, filtered tasks, edited task and share modal
-  const [tasks, setTasks] = useState([
-    {
-      name: "Task 1",
-      description: "Lorem ipsum dolor sit amet",
-      dueDate: "2023-03-22",
-      priority: "High",
-      status: "In Progress",
-    },
-    {
-      name: "Task 2",
-      description: "consectetur adipiscing elit",
-      dueDate: "2023-03-25",
-      priority: "Low",
-      status: "In Progress",
-    },
-    {
-      name: "Task 3",
-      description: "sed do eiusmod tempor",
-      dueDate: "2023-03-27",
-      priority: "Medium",
-      status: "Not Started",
-    },
-  ]);
+  const [tasks, setTasks] = useState(defaultTasks);
   const [filterType, setFilterType] = useState("status");
   const [filterValue, setFilterValue] = useState("");
   const [filteredTasks, setFilteredTasks] = useState(null);
@@ -48,7 +27,7 @@ function TaskDetails() {
         return task.priority
           .toLowerCase()
           .includes(filterValue.toLowerCase());
-      } else if (filterType === "name") {
+      }  else if (filterType === "name") {
         return task.name.toLowerCase().includes(filterValue.toLowerCase());
       } else if (filterType === "description") {
         return task.description
@@ -58,6 +37,7 @@ function TaskDetails() {
 
       return false;
     });
+      
 
     // Updating filtered tasks state
     setFilteredTasks(filteredTasks.length > 0 ? filteredTasks : null);
@@ -101,6 +81,14 @@ function TaskDetails() {
     setEditTaskIndex(-1);
     setEditedTask({});
   };
+  const deleteTask = (index) => {
+    const newTasks = [...tasks];
+    newTasks.splice(index, 1);
+    setTasks(newTasks);
+  };
+  const handleShareClick = () => {
+    setIsShareModalOpen(true);
+  };
 
   // Handling input change in edited task form
   const handleInputChange =
@@ -112,7 +100,7 @@ function TaskDetails() {
         <div>
             <h1>Task Details</h1>
             <div>
-                <Select
+                <select
                     value={filterType}
                     onChange={handleFilterTypeChange}
                 >
@@ -120,12 +108,13 @@ function TaskDetails() {
                     <option value="priority">Priority</option>
                     <option value="name">Name</option>
                     <option value="description">Description</option>
-                </Select>
+                </select>
                 <TextField
                     value={filterValue}
                     onChange={handleFilterValueChange}
                 />  
                 <Button onClick={handleClearFilter}>Clear Filter</Button>
+                <Button variant="contained" onClick={handleShareClick}>Share</Button>
             </div>
             <TableContainer>
                 <Table>
@@ -136,7 +125,9 @@ function TaskDetails() {
                             <TableCell>Due Date</TableCell>
                             <TableCell>Priority</TableCell> 
                             <TableCell>Status</TableCell>
-                            <TableCell>Actions</TableCell>
+                            <TableCell>Progress</TableCell>
+                            <TableCell>Shared With</TableCell>
+                            <TableCell style={{ paddingLeft: "60px" }}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -195,12 +186,35 @@ function TaskDetails() {
                                     </TableCell>
                                     <TableCell>
                                         {editTaskIndex === index ? (
+                                            <TextField
+                                                value={editedTask.progress}
+                                                onChange={handleInputChange("progress")}
+                                            />
+                                        ) : (
+                                            task.progress
+                                        )}
+                                    </TableCell>
+                                    <TableCell>
+                                        {editTaskIndex === index ? (
+                                            <TextField
+                                                value={editedTask.sharedWith}
+                                                onChange={handleInputChange("sharedWith")}
+                                            />
+                                        ) : (
+                                            task.sharedWith
+                                        )}
+                                    </TableCell>
+                                    <TableCell>
+                                        {editTaskIndex === index ? (
                                             <>
                                                 <Button onClick={() => handleSaveTask(index)}>Save</Button>
                                                 <Button onClick={handleCancelEdit}>Cancel</Button>
                                             </>
                                         ) : (
+                                            <>
                                             <Button onClick={() => handleEditTask(index, task)}>Edit</Button>
+                                            <Button onClick={() => deleteTask(index)}>Delete</Button>
+                                            </>
                                         )}
                                     </TableCell>
                                 </TableRow>
@@ -208,17 +222,23 @@ function TaskDetails() {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Button onClick={() => setIsShareModalOpen(true)}>Share</Button>
-            <Modal
-                open={isShareModalOpen}
-                onClose={() => setIsShareModalOpen(false)}
-            >
-                <div>
-                    <h1>Share</h1>
-                    <TextField />
-                    <Button>Share</Button>
-                </div>
+            <Modal open={isShareModalOpen} onClose={() => setIsShareModalOpen(false)}>
+            <div>
+            <Button variant="contained" startIcon={<Email />}>
+            Gmail
+            </Button>
+            <Button variant="contained" startIcon={<Facebook />}>
+            Facebook
+            </Button>
+            <Button variant="contained" startIcon={<Twitter />}>
+            Twitter
+            </Button>
+            <Button variant="contained" startIcon={<Instagram />}>
+            Instagram
+            </Button>
+            </div>
             </Modal>
+
         </div>
         );
     }
