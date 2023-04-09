@@ -19,7 +19,7 @@ To get started with the app, follow these steps:
 1. Clone the repository.
 
 ```bash
-https://github.com/AdamHarb/StudyingCompanion.git
+git clone https://github.com/AdamHarb/StudyingCompanion.git
 ```
 
 2. Install the necessary dependencies using npm.
