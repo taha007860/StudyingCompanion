@@ -1,7 +1,8 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
 import Views from "./Views";
 import { CssBaseline } from "@mui/material";
+import { useEffect } from "react";
+import { auth } from "./config/firebase";
+
 function App() {
         return (
                 <CssBaseline>
