@@ -1,7 +1,7 @@
 import Views from "./Views";
 import { CssBaseline } from "@mui/material";
-import { useEffect } from "react";
-import { auth } from "./config/firebase";
+import { BrowserRouter } from "react-router-dom";
+import Header from "./components/Header";
 
 function App() {
         return (
