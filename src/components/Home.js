@@ -62,7 +62,7 @@ export const Home = () => {
               >
                 <Typography>Shareable To-Do Lists</Typography>
               </AccordionSummary>
-              <AccordionDetails sx={{ ml: "20px" }}>
+              <AccordionDetails>
                 <Typography>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                   Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
@@ -112,6 +112,7 @@ export const Home = () => {
               mt: "130px",
               borderRadius: "10px",
               width: "170px",
+              bgcolor: "#3C3535",
             }}
             onClick={handleLogin}
           >
