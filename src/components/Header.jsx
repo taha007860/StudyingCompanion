@@ -14,7 +14,7 @@ import TimerIcon from "@mui/icons-material/Timer";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
-import { auth } from "../config/firebase";
+import { auth } from "../models/firebase";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
