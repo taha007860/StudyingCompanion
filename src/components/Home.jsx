@@ -12,9 +12,10 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import joe from "./Joe.jpg";
-import adam from "./Adam.jpg";
-import zaatar from "./Zaatar.jpg";
+import joe from "../../assets/Joe.jpg";
+import adam from "../../assets/Adam.jpg";
+import zaatar from "../../assets/Zaatar.jpg";
+
 export const Home = () => {
   const navigate = useNavigate();
   const handleLogin = async () => {
