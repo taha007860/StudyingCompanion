@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button, Container, Typography } from "@mui/material";
 import { auth } from "../models/firebase";
 import { signInAnonymously } from "firebase/auth";
+import { useEffect } from "react";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -15,6 +16,12 @@ const Auth = () => {
         console.error(e);
       });
   };
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      navigate("/Timer");
+    }
+  }, []);
 
   return (
     <Container
@@ -40,10 +47,20 @@ const Auth = () => {
             mb: "1rem",
           }}
         >
-          <Link to="/auth/Login">
+          <Link
+            to="/auth/Login"
+            style={{
+              textDecoration: "none",
+            }}
+          >
             <Button variant="contained">Login</Button>
           </Link>
-          <Link to="/auth/Signup">
+          <Link
+            to="/auth/Signup"
+            style={{
+              textDecoration: "none",
+            }}
+          >
             <Button variant="contained">Sign Up</Button>
           </Link>
         </Container>

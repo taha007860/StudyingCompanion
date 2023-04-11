@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { auth, googleProvider } from "../models/firebase";
-import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import {
   Alert,
@@ -38,7 +42,7 @@ export const Signup = () => {
     setButtonState(true);
 
     try {
-      const currUser = await addDoc(collection(db, "users"), {
+      await addDoc(collection(db, "users"), {
         email: email,
         password: password,
         displayName: displayName,
@@ -46,7 +50,6 @@ export const Signup = () => {
         if (p.user) {
           navigate("/Timer");
         } else {
-          setTimeout("", 3000);
           setLoading(false);
           setButtonState(false);
         }
@@ -59,7 +62,10 @@ export const Signup = () => {
   const handleGoogleSignUp = async () => {
     try {
       await signInWithPopup(auth, googleProvider).then((e) => {
-        e.then(navigate("/Timer"));
+        const credential = GoogleAuthProvider.credentialFromResult(e);
+        const token = credential.accessToken;
+        const user = e.user;
+        console.log(user);
       });
     } catch (e) {
       console.error(e);
