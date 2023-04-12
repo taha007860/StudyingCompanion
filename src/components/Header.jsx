@@ -47,6 +47,7 @@ const Header = () => {
         }}
       >
         <Container
+          disableGutters
           sx={{
             display: "flex",
             justifyContent: "flex-start",

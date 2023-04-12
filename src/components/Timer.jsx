@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import "../styles/App.css";
 import "../styles/Timer.css";
+
 const Timer = () => {
   const [active, setActive] = useState("");
   const [level, setLevel] = useState("Custom");
