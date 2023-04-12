@@ -60,10 +60,21 @@ export const Signup = () => {
               ],
             }).then(() => {
               console.log("Document written with ID: ", docRef.id);
-              setEmailError(null);
-              setPasswordError(null);
-              navigate("/Timer");
-              console.log(auth);
+              const settingRef = addDoc(collection(db, "settings"), {
+                userID: auth.currentUser.uid,
+                pomdoroLevel: "",
+                settingOne: "false",
+              })
+                .then(() => {
+                  console.log("Default settings applied.");
+                  setEmailError(null);
+                  setPasswordError(null);
+                  navigate("/Timer");
+                  console.log(auth);
+                })
+                .catch((e) => {
+                  console.error(e);
+                });
             });
           })
           .catch((e) => {

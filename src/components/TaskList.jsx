@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import defaultTasks from "./defaultTasks";
 import { db } from "../models/firebase";
 import { auth } from "../models/firebase";
@@ -28,6 +28,12 @@ import {
   where,
   getDocs,
   documentId,
+  addDoc,
+  updateDoc,
+  arrayUnion,
+  doc,
+  deleteDoc,
+  arrayRemove,
 } from "firebase/firestore";
 
 function TaskList() {
@@ -36,12 +42,16 @@ function TaskList() {
   const [counter, setCounter] = useState(4);
   const [name, setName] = useState("");
   const [sharedWith, setSharedWith] = useState([]);
-  const [tasks, setTasks] = useState(defaultTasks);
+  const [tasks, setTasks] = useState([]);
+  const [taskListID, setTaskListID] = useState("");
+  const [activeTask, setActiveTask] = useState("");
 
-  useEffect(() => {
-    const tasklistRef = collection(db, "TaskList");
-    const tasksRef = collection(db, "tasks");
+  const tasklistRef = collection(db, "TaskList");
+  const tasksRef = collection(db, "tasks");
+
+  const update = () => {
     let taskList;
+    let tasks = [];
 
     const getTasksID = query(
       tasklistRef,
@@ -50,9 +60,9 @@ function TaskList() {
 
     const fetchIDs = async () => {
       const querySnapshot = await getDocs(getTasksID);
-
       querySnapshot.forEach((doc) => {
         taskList = doc;
+        setTaskListID(doc.id);
       });
     };
 
@@ -61,8 +71,8 @@ function TaskList() {
         query(tasksRef, where(documentId(), "in", taskList.data().tasks))
       );
       taskSnapshot.forEach((task) => {
-        console.log(task?.data());
-        // setTasks([...tasks, task.data()]);
+        console.log(task?.id);
+        tasks.push(task);
       });
     };
 
@@ -71,6 +81,7 @@ function TaskList() {
         console.log("Successfully fetched IDs");
         fetchTasks()
           .then(() => {
+            setTasks(tasks);
             console.log("Successfully fetched tasks");
           })
           .catch((error) => {
@@ -80,10 +91,15 @@ function TaskList() {
       .catch((error) => {
         console.error(error);
       });
+  };
+
+  useEffect(() => {
+    update();
   }, []);
 
   const handleClick = (event, task) => {
     setAnchorEl(event.currentTarget);
+    setActiveTask(task);
   };
 
   const handleClose = () => {
@@ -106,10 +122,21 @@ function TaskList() {
     handleClose();
   };
 
-  const handleDelete = (task) => {
-    alert(`Delete task '${task.name}'`);
-    handleClose();
+  const handleDelete = () => {
+    deleteDoc(doc(db, "tasks", activeTask.id))
+      .then(() => {
+        updateDoc(doc(db, "TaskList", taskListID), {
+          tasks: arrayRemove(activeTask.id),
+        }).then((r) => {
+          update();
+          console.log(r);
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
+
   const handleAddTask = () => {
     const newTask = {
       name: `Task ${counter}`,
@@ -119,8 +146,24 @@ function TaskList() {
       description: "",
       sharedWith: ["User 1", "User 4"],
     };
-    setTasks([...tasks, newTask]);
-    setCounter(counter + 1);
+
+    console.log("Task list ID: ", taskListID);
+    addDoc(tasksRef, newTask)
+      .then((docRef) => {
+        updateDoc(doc(db, "TaskList", taskListID), {
+          tasks: arrayUnion(docRef.id),
+        })
+          .then(() => {
+            update();
+            setCounter(counter + 1);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (
@@ -143,10 +186,10 @@ function TaskList() {
           px: 3,
         }}
       >
-        <div>
-          <h4>In Progress</h4>
-          <p>3 tasks</p>
-        </div>
+        <Container>
+          <Typography variant="h5">In Progress</Typography>
+          <Typography> {tasks.length}</Typography>
+        </Container>
         <IconButton size="large" aria-label="add task" onClick={handleAddTask}>
           <AddIcon />
         </IconButton>
@@ -160,86 +203,84 @@ function TaskList() {
         }}
       >
         {tasks.map((task) => (
-          <>
-            <ListItem
-              key={task.name}
-              secondaryAction={
-                <IconButton
-                  edge="end"
-                  aria-label="options"
-                  onClick={(e) => handleClick(e, task)}
+          <ListItem
+            key={task.id}
+            secondaryAction={
+              <IconButton
+                edge="end"
+                aria-label="options"
+                onClick={(e) => handleClick(e, task)}
+              >
+                <MoreVertIcon />
+              </IconButton>
+            }
+          >
+            <ListItemButton>
+              <ListItemAvatar>
+                <Avatar
+                  sx={{
+                    bgcolor: "primary.main",
+                    color: "primary.contrastText",
+                  }}
                 >
-                  <MoreVertIcon />
-                </IconButton>
-              }
-            >
-              <ListItemButton>
-                <ListItemAvatar>
-                  <Avatar
+                  {task.data().name[0]}
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={task.data().name}
+                secondary={
+                  <Box
                     sx={{
-                      bgcolor: "primary.main",
-                      color: "primary.contrastText",
+                      display: "flex",
+                      alignItems: "center",
+                      flexDirection: "column",
                     }}
                   >
-                    {task.name[0]}
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={task.name}
-                  secondary={
+                    <Box sx={{ mb: 1, ml: -18 }}>shared with</Box>
                     <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        flexDirection: "column",
-                      }}
+                      sx={{ display: "flex", alignItems: "center", ml: -17 }}
                     >
-                      <Box sx={{ mb: 1, ml: -18 }}>shared with</Box>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", ml: -17 }}
-                      >
-                        {task.sharedWith.map((user, index) => (
-                          <Avatar
-                            key={index}
-                            sx={{ ml: 1 }}
-                            alt={user}
-                            src={`https://i.pravatar.cc/32?u=${user}`}
-                          />
-                        ))}
-                      </Box>
+                      {task.data().sharedWith.map((user, index) => (
+                        <Avatar
+                          key={index}
+                          sx={{ ml: 1 }}
+                          alt={user}
+                          src={`https://i.pravatar.cc/32?u=${user}`}
+                        />
+                      ))}
                     </Box>
-                  }
-                  sx={{ ml: 2, mt: 1 }}
+                  </Box>
+                }
+                sx={{ ml: 2, mt: 1 }}
+              />
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <LinearProgress
+                  variant="determinate"
+                  value={task.data().progress}
+                  sx={{ width: 100 }}
                 />
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <LinearProgress
-                    variant="determinate"
-                    value={task.progress}
-                    sx={{ width: 100 }}
-                  />
-                  <Typography variant="body2" color="text.secondary">
-                    {`${task.progress}%`}
-                  </Typography>
-                </Stack>
-              </ListItemButton>
-            </ListItem>
-            <Divider />
-          </>
+                <Typography variant="body2" color="text.secondary">
+                  {`${task.data().progress}%`}
+                </Typography>
+              </Stack>
+            </ListItemButton>
+          </ListItem>
         ))}
+        <Menu
+          id="simple-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={() => handleTaskDetails()}>Task Details</MenuItem>
+          <MenuItem onClick={() => handleShare()}>Share</MenuItem>
+          <MenuItem onClick={() => handleEdit()}>Edit</MenuItem>
+          <MenuItem onClick={(e) => handleDelete(e)}>Delete</MenuItem>
+        </Menu>
       </List>
-      <Menu
-        id="simple-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <MenuItem onClick={() => handleTaskDetails()}>Task Details</MenuItem>
-        <MenuItem onClick={() => handleShare()}>Share</MenuItem>
-        <MenuItem onClick={() => handleEdit()}>Edit</MenuItem>
-        <MenuItem onClick={() => handleDelete()}>Delete</MenuItem>
-      </Menu>
     </Container>
   );
 }
+
 export default TaskList;
