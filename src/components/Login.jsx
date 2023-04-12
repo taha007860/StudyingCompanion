@@ -3,10 +3,11 @@ import { auth, googleProvider } from "../models/firebase";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import {
-  Alert,
   Button,
+  CircularProgress,
   Container,
   FormControl,
+  FormHelperText,
   IconButton,
   InputAdornment,
   InputLabel,
@@ -15,15 +16,16 @@ import {
 } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
-import { db } from "../models/firebase";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = React.useState(false);
+  const [emailError, setEmailError] = useState(null);
+  const [passwordError, setPasswordError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
-  let err = null;
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
@@ -31,19 +33,37 @@ export const Login = () => {
   };
 
   const handleSignIn = async () => {
+    setLoading(true);
+    setEmailError(null);
+    setPasswordError(null);
     await signInWithEmailAndPassword(auth, email, password)
-      .then((p) => {
+      .then(() => {
+        setEmailError(null);
+        setPasswordError(null);
         navigate("/Timer");
       })
       .catch((e) => {
-        console.error(e);
+        setLoading(false);
+        console.log(e.code);
+        if (e.code === "auth/invalid-email") {
+          setEmailError("Invalid email!");
+        }
+        if (e.code === "auth/wrong-password") {
+          setPasswordError("Wrong password!");
+        }
+        if (e.code === "auth/missing-password") {
+          setPasswordError("Invalid password!");
+        }
+        if (e.code === "auth/user-not-found") {
+          setEmailError("User not found!");
+        }
       });
   };
 
   const handleGoogleSignIn = async () => {
     try {
-      await signInWithPopup(auth, googleProvider).then((e) => {
-        e.then(navigate("/Timer"));
+      await signInWithPopup(auth, googleProvider).then(() => {
+        navigate("/Timer");
       });
     } catch (e) {
       console.error(e);
@@ -60,7 +80,7 @@ export const Login = () => {
         mt: "1rem",
       }}
     >
-      <Typography variant="h2" my="1rem">
+      <Typography variant="h2" my="1rem" align="center">
         Welcome back!
       </Typography>
       <FormControl sx={{ m: 1 }} variant="outlined">
@@ -68,16 +88,21 @@ export const Login = () => {
         <OutlinedInput
           id="outlined-email"
           label="Email"
+          error={!!emailError}
           onChange={(e) => {
             setEmail(e.target.value);
           }}
         />
+        {emailError != null && (
+          <FormHelperText error={true}> {emailError} </FormHelperText>
+        )}
       </FormControl>
       <FormControl sx={{ m: 1 }} variant="outlined">
         <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
         <OutlinedInput
           id="outlined-adornment-password"
           type={showPassword ? "text" : "password"}
+          error={!!passwordError}
           endAdornment={
             <InputAdornment position="end">
               <IconButton
@@ -95,6 +120,9 @@ export const Login = () => {
             setPassword(e.target.value);
           }}
         />
+        {passwordError != null && (
+          <FormHelperText error={true}> {passwordError} </FormHelperText>
+        )}
       </FormControl>
 
       <Container
@@ -111,8 +139,13 @@ export const Login = () => {
           sx={{
             m: 1,
           }}
+          disabled={loading}
         >
-          Login
+          {loading ? (
+            <CircularProgress size="1.5rem" />
+          ) : (
+            <Typography>Sign In</Typography>
+          )}
         </Button>
         <Button
           variant="contained"

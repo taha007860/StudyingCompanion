@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { auth, googleProvider } from "../models/firebase";
+import { collection, addDoc } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  updateProfile,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import {
-  Alert,
   Button,
+  CircularProgress,
   Container,
   FormControl,
   IconButton,
@@ -16,20 +18,20 @@ import {
   InputLabel,
   OutlinedInput,
   Typography,
+  FormHelperText,
 } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { collection, addDoc } from "firebase/firestore";
 import { db } from "../models/firebase";
 
 export const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
+  const [displayName, setDisplayName] = useState("User");
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = useState(false);
-  const [buttonState, setButtonState] = useState(false);
-
+  const [emailError, setEmailError] = useState(null);
+  const [passwordError, setPasswordError] = useState(null);
   const navigate = useNavigate();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -39,24 +41,51 @@ export const Signup = () => {
 
   const handleSignUp = async () => {
     setLoading(true);
-    setButtonState(true);
-
-    try {
-      await addDoc(collection(db, "users"), {
-        email: email,
-        password: password,
-        displayName: displayName,
-      }).then((p) => {
-        if (p.user) {
-          navigate("/Timer");
-        } else {
-          setLoading(false);
-          setButtonState(false);
+    setEmailError(null);
+    setPasswordError(null);
+    console.log(auth);
+    await createUserWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        updateProfile(auth.currentUser, {
+          displayName: displayName,
+        })
+          .then(() => {
+            const docRef = addDoc(collection(db, "TaskList"), {
+              public: false,
+              userID: auth.currentUser.uid,
+              tasks: [
+                "0gmIiaHKlDVgl2iU24ML",
+                "61EenH5OK60HqGQ9Nstd",
+                "Kzvb7v7u8U0vbLfCA4aK",
+              ],
+            }).then(() => {
+              console.log("Document written with ID: ", docRef.id);
+              setEmailError(null);
+              setPasswordError(null);
+              navigate("/Timer");
+              console.log(auth);
+            });
+          })
+          .catch((e) => {
+            console.error(e);
+          });
+      })
+      .catch((e) => {
+        if (e.code === "auth/invalid-email") {
+          setEmailError("Invalid email!");
         }
+        if (e.code === "auth/email-already-in-use") {
+          setEmailError("Email already in use!");
+        }
+        if (e.code === "auth/weak-password") {
+          setPasswordError("Weak password!");
+        }
+        if (e.code === "auth/missing-password") {
+          setPasswordError("Invalid password!");
+        }
+        setLoading(false);
+        console.error(e);
       });
-    } catch (e) {
-      console.error(e);
-    }
   };
 
   const handleGoogleSignUp = async () => {
@@ -82,8 +111,9 @@ export const Signup = () => {
         mt: "1rem",
       }}
     >
-      <Typography variant="h2" my="1rem">
-        Good Luck!
+      <Typography variant="h6" my="1rem" align="center">
+        Fun fact: Video games can lessen disruptive behaviors and enhance
+        positive development in ADHD children.
       </Typography>
       <FormControl sx={{ m: 1 }} variant="outlined">
         <InputLabel htmlFor="outlined-displayName">Display Name</InputLabel>
@@ -98,18 +128,23 @@ export const Signup = () => {
       <FormControl sx={{ m: 1 }} required={true} variant="outlined">
         <InputLabel htmlFor="outlined-email">Email</InputLabel>
         <OutlinedInput
+          error={!!emailError}
           id="outlined-email"
           label="Email"
           onChange={(e) => {
             setEmail(e.target.value);
           }}
         />
+        {emailError != null && (
+          <FormHelperText error={true}> {emailError} </FormHelperText>
+        )}
       </FormControl>
       <FormControl sx={{ m: 1 }} required={true} variant="outlined">
         <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
         <OutlinedInput
           id="outlined-adornment-password"
           type={showPassword ? "text" : "password"}
+          error={!!passwordError}
           endAdornment={
             <InputAdornment position="end">
               <IconButton
@@ -127,6 +162,9 @@ export const Signup = () => {
             setPassword(e.target.value);
           }}
         />
+        {passwordError != null && (
+          <FormHelperText error={true}> {passwordError} </FormHelperText>
+        )}
       </FormControl>
 
       <Container
@@ -143,9 +181,13 @@ export const Signup = () => {
           sx={{
             m: 1,
           }}
-          disabled={buttonState}
+          disabled={loading}
         >
-          Sign Up
+          {loading ? (
+            <CircularProgress size="1.5rem" />
+          ) : (
+            <Typography>Sign Up</Typography>
+          )}
         </Button>
         <Button
           variant="contained"
