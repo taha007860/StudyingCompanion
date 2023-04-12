@@ -5,7 +5,17 @@ import { Settings } from './Settings';
 import { PaymentMethods } from './PaymentMethods';
 import {Subscriptions} from './Subscriptions';
 import {Notification} from './Notification';
+import { deleteUser } from "firebase/auth";
 export const Account = () => {
+  const handleDelete = () => {
+    deleteUser(auth.currentUser)
+      .then(() => {
+        auth.signOut().then((r) => console.log(r));
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
   const [user, setUser] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showPaymentMethods, setShowPaymentMethods] = useState(false);
@@ -53,6 +63,15 @@ export const Account = () => {
       <Button variant="contained" sx={{ marginBottom: '1rem' }} onClick={handleSubscriptions}>Subscriptions</Button>
       <Button variant="contained" sx={{ marginBottom: '1rem' }} onClick={handleNotifications}>Notifications</Button>
       <Button variant="contained" color="error" onClick={handleLogout}>Logout</Button>
+      <Button
+        variant="contained"
+        onClick={handleDelete}
+        sx={{
+          my: "3rem",
+        }}
+      >
+        Delete Account
+      </Button>
       {showSettings && <Settings />}
       {showPaymentMethods && <PaymentMethods />}
       {showSubscriptions && <Subscriptions />}
@@ -60,3 +79,4 @@ export const Account = () => {
     </Box>
   );
 };
+

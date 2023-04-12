@@ -24,9 +24,7 @@ export const Home = () => {
   return (
     <div>
       <Box sx={{ ml: 3, width: 1 / 2, mt: 6, fontFamily: "Open Sans" }}>
-        <Typography variant="h6">
-          &nbsp;&nbsp;&nbsp;Studying Companion
-        </Typography>
+        <Typography variant="h6">Studying Companion</Typography>
         <Typography variant="h7" sx={{ ml: "0px" }}>
           An educational software that aims at aiding the average student to
           focus especially since seeing an increase in ADHD prevalence in
@@ -54,7 +52,14 @@ export const Home = () => {
               education. These features are but not limited to:
             </Typography>
           </Box>
-          <Box sx={{ borderRadius: 10, width: 500, fontFamily: "Open Sans" }}>
+          <Box
+            sx={{
+              borderRadius: 10,
+              width: 500,
+              fontFamily: "Open Sans",
+              mx: "1rem",
+            }}
+          >
             <Accordion sx={{ ml: "20px" }}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}

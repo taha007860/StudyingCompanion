@@ -2,15 +2,17 @@ import "../styles/App.css";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Container, Typography } from "@mui/material";
 import { auth } from "../models/firebase";
-import { signInAnonymously } from "firebase/auth";
+import { signInAnonymously, updateProfile } from "firebase/auth";
 import { useEffect } from "react";
 
 const Auth = () => {
   const navigate = useNavigate();
   const handleGuest = async () => {
     signInAnonymously(auth)
-      .then((p) => {
-        p.then(navigate("/Timer"));
+      .then(() => {
+        updateProfile(auth.currentUser, {
+          displayName: "Guest",
+        }).then(() => navigate("/Timer"));
       })
       .catch((e) => {
         console.error(e);

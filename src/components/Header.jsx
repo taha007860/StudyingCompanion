@@ -6,6 +6,8 @@ import {
   Typography,
   IconButton,
   Container,
+  Tooltip,
+  Avatar,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PlaylistAddCheckIcon from "@mui/icons-material/PlaylistAddCheck";
@@ -21,6 +23,7 @@ const Header = () => {
   useEffect(() => {
     const update = auth.onAuthStateChanged((user) => {
       setUser(user);
+      console.log(user);
     });
     return () => {
       update();
@@ -44,6 +47,7 @@ const Header = () => {
         }}
       >
         <Container
+          disableGutters
           sx={{
             display: "flex",
             justifyContent: "flex-start",
@@ -70,52 +74,49 @@ const Header = () => {
           sx={{
             display: "flex",
             flexDirecton: "row",
-            justifyContent: "right",
+            justifyContent: "space-between",
           }}
         >
-          {user == null ? (
+          {!(user === null) && (
             <Fragment>
-              <Typography>Not Signed In</Typography>
-            </Fragment>
-          ) : (
-            <Fragment>
-              <IconButton>
-                <PlaylistAddCheckIcon sx={{ fontSize: 45 }} />
-              </IconButton>
-              <IconButton>
-                <TimerIcon sx={{ fontSize: 45 }} />
-              </IconButton>
-              <IconButton>
-                <AccountCircleIcon
-                  sx={{ fontSize: 45, marginBottom: "1.5rem" }}
-                />
-                <Typography
-                  variant="subtitle1"
-                  sx={{
-                    marginTop: "3rem",
-                    fontWeight: "bold",
-                    marginLeft: "-2.85rem",
-                  }}
-                >
-                  Adam
-                </Typography>
-              </IconButton>
-              <IconButton>
-                <LogoutIcon
-                  sx={{ fontSize: 45, marginBottom: "1.5rem" }}
-                  onClick={handleLogout}
-                />
-                <Typography
-                  variant="subtitle1"
-                  sx={{
-                    marginTop: "3rem",
-                    fontWeight: "bold",
-                    marginLeft: "-2.85rem",
-                  }}
-                >
-                  Logout
-                </Typography>
-              </IconButton>
+              <Tooltip title="Tasks">
+                <IconButton onClick={() => navigate("/TaskList")}>
+                  <PlaylistAddCheckIcon sx={{ fontSize: 30 }} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Timer">
+                <IconButton onClick={() => navigate("/Timer")}>
+                  <TimerIcon sx={{ fontSize: 30 }} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="My Account" onClick={() => navigate("/Account")}>
+                <IconButton>
+                  <Avatar
+                    src={auth.currentUser?.photoURL}
+                    sx={{
+                      fontSize: 25,
+                      marginBottom: "1.5rem",
+                    }}
+                  >
+                    {auth.currentUser?.displayName?.charAt(0)}
+                  </Avatar>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      marginTop: "3rem",
+                      fontWeight: "bold",
+                      marginLeft: "-2.85rem",
+                    }}
+                  >
+                    {auth.currentUser?.displayName}
+                  </Typography>
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Logout">
+                <IconButton onClick={handleLogout}>
+                  <LogoutIcon sx={{ fontSize: 30 }} />
+                </IconButton>
+              </Tooltip>
             </Fragment>
           )}
         </Container>
