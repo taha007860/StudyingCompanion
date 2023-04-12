@@ -29,7 +29,9 @@ const Views = () => {
       <Route element={<ProtectedRoute />}>
         <Route path="/Timer" element={<Timer />} />
         <Route path="/Account" element={<Account />} />
-        <Route path="/TaskList" element={<TaskList />} />
+        <Route path="/TaskList" element={<TaskList />}>
+          <Route path=":id" element={<TaskDetails />} />
+        </Route>
       </Route>
       <Route path="*" element={handle404()} />
     </Routes>
