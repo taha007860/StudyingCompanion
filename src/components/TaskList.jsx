@@ -20,7 +20,6 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
 import { useState} from "react";
 import { Link } from "react-router-dom";
-import TaskDetails from "./TaskDetails";
 import defaultTasks from "./defaultTasks";
 function TaskList() {
 	const [anchorEl, setAnchorEl] = useState(null);
