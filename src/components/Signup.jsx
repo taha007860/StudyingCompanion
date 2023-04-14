@@ -40,11 +40,13 @@ export const Signup = () => {
   };
 
   const handleSignUp = async () => {
+    console.log(Timestamp.fromDate(new Date()).toDate());
     const sampleTask = {
       name: `Sample Task`,
       status: "Not completed",
-      date: Timestamp.now().toDate(),
+      date: Timestamp.fromDate(new Date()).toDate(),
       priority: "1",
+      public: false,
       content: "This is a sample task. You can delete it.",
       sharedWith: [],
     };

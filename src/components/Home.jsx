@@ -153,6 +153,7 @@ export const Home = () => {
         <a
           href="https://www.linkedin.com/in/mohammad-al-zaatari-976347240/"
           target="_blank"
+          rel="noreferrer"
         >
           <Avatar
             alt="Zaatar"
@@ -160,7 +161,11 @@ export const Home = () => {
             sx={{ width: "50px", height: "50px" }}
           />
         </a>
-        <a href="https://www.linkedin.com/in/adam-i-harb/" target="_blank">
+        <a
+          href="https://www.linkedin.com/in/adam-i-harb/"
+          target="_blank"
+          rel="noreferrer"
+        >
           <Avatar
             alt="Adam"
             src={adam}
@@ -170,6 +175,7 @@ export const Home = () => {
         <a
           href="https://www.linkedin.com/in/joe-hage-72b3aa264/"
           target="_blank"
+          rel="noreferrer"
         >
           <Avatar alt="Joe" src={joe} sx={{ width: "50px", height: "50px" }} />
         </a>

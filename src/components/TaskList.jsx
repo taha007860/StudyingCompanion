@@ -25,8 +25,12 @@ import {
   InputLabel,
   Select,
   FormControl,
+  Snackbar,
+  Switch,
+  FormControlLabel,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import AddIcon from "@mui/icons-material/Add";
 import { Link, useNavigate } from "react-router-dom";
 import { Fragment, useEffect, useState } from "react";
@@ -57,6 +61,10 @@ function TaskList() {
   const [taskListID, setTaskListID] = useState("");
   const [activeTask, setActiveTask] = useState("");
   const [editing, setEditing] = useState(false);
+  const [share, setShare] = useState(false);
+  const [shareURL, setShareURL] = useState("");
+  const [snack, setSnack] = useState(false);
+  const [vis, setVis] = useState(false);
 
   // The following are for creating a task
   const [open, setOpen] = useState(false);
@@ -129,7 +137,9 @@ function TaskList() {
   };
 
   const handleShare = (task) => {
-    alert(`Share task '${task.name}' with someone`);
+    setShareURL(`http://localhost:5173/TaskList/${activeTask.id}`);
+    setShare(true);
+    setVis(activeTask.data().public);
     handleClose();
   };
 
@@ -163,6 +173,7 @@ function TaskList() {
 
   const handleCancel = () => {
     setOpen(false);
+    setEditing(false);
     setTaskContent("");
     setTaskName("");
     setPriority("1");
@@ -177,7 +188,7 @@ function TaskList() {
       })
         .then(() => {
           update();
-          setOpen(false);
+          handleCancel();
         })
         .catch((error) => {
           console.error(error);
@@ -186,9 +197,10 @@ function TaskList() {
       const newTask = {
         name: taskName,
         status: "Not completed",
-        date: Timestamp.now().toDate(),
+        date: Timestamp.fromDate(new Date()).toDate(),
         priority: priority,
         content: taskContent,
+        public: false,
         sharedWith: [],
       };
 
@@ -200,7 +212,7 @@ function TaskList() {
           })
             .then(() => {
               update();
-              setOpen(false);
+              handleCancel();
             })
             .catch((error) => {
               console.error(error);
@@ -210,6 +222,19 @@ function TaskList() {
           console.error(error);
         });
     }
+  };
+
+  const changeVis = () => {
+    updateDoc(doc(db, "tasks", activeTask.id), {
+      public: !activeTask.data().public,
+    })
+      .then(() => {
+        setVis(!vis);
+        update();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (
@@ -233,8 +258,8 @@ function TaskList() {
         }}
       >
         <Container>
-          <Typography variant="h5">In Progress</Typography>
-          <Typography>{tasks.length}</Typography>
+          <Typography variant="h5">Task List</Typography>
+          <Typography>{tasks.length} Tasks</Typography>
         </Container>
         <IconButton size="large" aria-label="add task" onClick={handleAddTask}>
           <AddIcon />
@@ -305,6 +330,59 @@ function TaskList() {
             <Button onClick={handleSubmit}>Submit</Button>
           </DialogActions>
         </Dialog>
+        <Dialog open={share} onClose={handleCancel}>
+          <DialogTitle>Share!</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Please copy the link below to share this task with someone. Please
+              note that the task has to either be public or the authenticated
+              user's email must be added to the task.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="URL"
+              defaultValue={shareURL}
+              type="email"
+              fullWidth
+              variant="standard"
+              InputProps={{
+                readOnly: true,
+                endAdornment: (
+                  <IconButton
+                    onClick={() => {
+                      navigator.clipboard
+                        .writeText(shareURL)
+                        .then((r) => setSnack(true));
+                    }}
+                  >
+                    <ContentCopyIcon></ContentCopyIcon>
+                  </IconButton>
+                ),
+              }}
+            />
+            <FormControlLabel
+              control={<Switch checked={vis} onChange={(e) => changeVis()} />}
+              label="Public"
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => {
+                setShare(false);
+              }}
+            >
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Snackbar
+          open={snack}
+          autoHideDuration={6000}
+          onClose={() => setSnack(false)}
+          message="URL Copied"
+        />
         {tasks.map((task) => (
           <ListItem
             key={task.id}
@@ -330,16 +408,19 @@ function TaskList() {
                 </Avatar>
               </ListItemAvatar>
               <ListItemText
-                primary={task.data().name}
+                primary={
+                  <Typography variant="h6">{task.data().name}</Typography>
+                }
                 secondary={
                   <Box
                     sx={{
                       display: "flex",
-                      alignItems: "center",
+                      alignItems: "baseline",
                       flexDirection: "column",
                     }}
                   >
-                    <Box sx={{ mb: 1, ml: -18 }}>shared with</Box>
+                    <Typography>Description: {task.data().content}</Typography>
+                    <Box sx={{ mb: 1, ml: -18, my: ".5rem" }}>Shared with</Box>
                     <Box
                       sx={{ display: "flex", alignItems: "center", ml: -21.75 }}
                     >
@@ -356,6 +437,14 @@ function TaskList() {
                             ))
                         : "No one"}
                     </Box>
+
+                    <Typography
+                      sx={{
+                        ml: "-1.5rem",
+                      }}
+                    >
+                      Created on: {task.data().date.toDate().toDateString()}
+                    </Typography>
                   </Box>
                 }
                 sx={{ ml: 2, mt: 1 }}
