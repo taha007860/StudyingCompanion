@@ -95,12 +95,16 @@ function TaskList() {
     };
 
     const fetchTasks = async () => {
-      const taskSnapshot = await getDocs(
-        query(tasksRef, where(documentId(), "in", taskList.data().tasks))
-      );
-      taskSnapshot.forEach((task) => {
-        tasks.push(task);
-      });
+      if (taskList.data().tasks.length === 0) {
+        setTasks([]);
+      } else {
+        const taskSnapshot = await getDocs(
+          query(tasksRef, where(documentId(), "in", taskList.data().tasks))
+        );
+        taskSnapshot.forEach((task) => {
+          tasks.push(task);
+        });
+      }
     };
 
     fetchIDs()
