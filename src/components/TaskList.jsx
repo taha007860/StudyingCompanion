@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Fragment, useEffect, useState } from "react";
 import defaultTasks from "./defaultTasks";
 import { db } from "../models/firebase";
@@ -50,6 +50,8 @@ function TaskList() {
   const tasklistRef = collection(db, "TaskList");
   const tasksRef = collection(db, "tasks");
 
+  const navigate = useNavigate();
+
   const update = () => {
     let taskList;
     let tasks = [];
@@ -72,7 +74,6 @@ function TaskList() {
         query(tasksRef, where(documentId(), "in", taskList.data().tasks))
       );
       taskSnapshot.forEach((task) => {
-        console.log(task?.id);
         tasks.push(task);
       });
     };
@@ -106,9 +107,8 @@ function TaskList() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleTaskDetails = (task) => {
-    alert(`Task Details for '${task.name}'`);
-    handleClose();
+  const handleTaskDetails = () => {
+    navigate(`/TaskList/${activeTask.id}`);
   };
 
   const handleShare = (task) => {
@@ -118,8 +118,8 @@ function TaskList() {
 
   const handleEdit = (task) => {
     setEditing(true);
-    setName(task.name);
-    setSharedWith(task.sharedWith);
+    setName(activeTask.data().name);
+    setSharedWith(activeTask.data().sharedWith);
     handleClose();
   };
 
@@ -189,7 +189,7 @@ function TaskList() {
       >
         <Container>
           <Typography variant="h5">In Progress</Typography>
-          <Typography> {tasks.length}</Typography>
+          <Typography>{tasks.length}</Typography>
         </Container>
         <IconButton size="large" aria-label="add task" onClick={handleAddTask}>
           <AddIcon />
@@ -216,7 +216,7 @@ function TaskList() {
               </IconButton>
             }
           >
-            <ListItemButton>
+            <ListItemButton onClick={(e) => handleTaskDetails(e, task)}>
               <ListItemAvatar>
                 <Avatar
                   sx={{
@@ -224,7 +224,7 @@ function TaskList() {
                     color: "primary.contrastText",
                   }}
                 >
-                  {task.data().name[0]}
+                  {auth.currentUser?.displayName[0]}
                 </Avatar>
               </ListItemAvatar>
               <ListItemText
