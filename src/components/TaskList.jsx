@@ -34,7 +34,6 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import AddIcon from "@mui/icons-material/Add";
 import { Link, useNavigate } from "react-router-dom";
 import { Fragment, useEffect, useState } from "react";
-import defaultTasks from "./defaultTasks";
 import { db } from "../models/firebase";
 import { auth } from "../models/firebase";
 import {
@@ -54,9 +53,6 @@ import {
 
 function TaskList() {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [counter, setCounter] = useState(4);
-  const [name, setName] = useState("");
-  const [sharedWith, setSharedWith] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [taskListID, setTaskListID] = useState("");
   const [activeTask, setActiveTask] = useState("");
@@ -199,7 +195,7 @@ function TaskList() {
         });
     } else {
       const newTask = {
-        name: taskName,
+        name: taskName || `Task #${tasks.length + 1}`,
         status: "Not completed",
         date: Timestamp.fromDate(new Date()).toDate(),
         priority: priority,
@@ -423,7 +419,10 @@ function TaskList() {
                       flexDirection: "column",
                     }}
                   >
-                    <Typography>Description: {task.data().content}</Typography>
+                    <Typography>
+                      {task.data().content &&
+                        "Description: " + task.data().content}
+                    </Typography>
                     <Box sx={{ mb: 1, ml: -18, my: ".5rem" }}>Shared with</Box>
                     <Box
                       sx={{ display: "flex", alignItems: "center", ml: -21.75 }}
