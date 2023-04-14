@@ -1,4 +1,3 @@
-import { AlignHorizontalCenter } from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -15,6 +14,17 @@ import {
   Menu,
   MenuItem,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContentText,
+  DialogActions,
+  Button,
+  TextField,
+  DialogContent,
+  Slider,
+  InputLabel,
+  Select,
+  FormControl,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
@@ -35,6 +45,7 @@ import {
   doc,
   deleteDoc,
   arrayRemove,
+  Timestamp,
 } from "firebase/firestore";
 
 function TaskList() {
@@ -46,6 +57,12 @@ function TaskList() {
   const [tasks, setTasks] = useState([]);
   const [taskListID, setTaskListID] = useState("");
   const [activeTask, setActiveTask] = useState("");
+
+  // The following are for creating a task
+  const [open, setOpen] = useState(false);
+  const [taskName, setTaskName] = useState("");
+  const [taskContent, setTaskContent] = useState("");
+  const [priority, setPriority] = useState(1);
 
   const tasklistRef = collection(db, "TaskList");
   const tasksRef = collection(db, "tasks");
@@ -139,13 +156,24 @@ function TaskList() {
   };
 
   const handleAddTask = () => {
+    setOpen(true);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+    setTaskContent("");
+    setTaskName("");
+    setPriority("1");
+  };
+
+  const handleSubmit = () => {
     const newTask = {
-      name: `Task ${counter}`,
-      progress: 25,
+      name: taskName,
       status: "Not completed",
-      date: "4/7/2023",
-      description: "",
-      sharedWith: ["User 1", "User 4"],
+      date: Timestamp.now().toDate(),
+      priority: priority,
+      content: taskContent,
+      sharedWith: [],
     };
 
     console.log("Task list ID: ", taskListID);
@@ -157,6 +185,7 @@ function TaskList() {
           .then(() => {
             update();
             setCounter(counter + 1);
+            setOpen(false);
           })
           .catch((error) => {
             console.error(error);
@@ -203,6 +232,63 @@ function TaskList() {
           bgcolor: "background.paper",
         }}
       >
+        <Dialog open={open} onClose={handleClose} fullWidth={true}>
+          <DialogTitle>Please fill out these details.</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Task Name"
+              defaultValue="Task Name"
+              type="taskName"
+              fullWidth
+              variant="standard"
+              onChange={(e) => {
+                setTaskName(e.target.value);
+              }}
+              required={true}
+            />
+            <TextField
+              id="outlined-multiline-static"
+              label="Content"
+              multiline
+              rows={4}
+              defaultValue="Write a task description here!"
+              fullWidth={true}
+              required={true}
+              onChange={(e) => {
+                setTaskContent(e.target.value);
+              }}
+              sx={{
+                my: "1rem",
+              }}
+            />
+            <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+              <InputLabel id="demo-simple-select-standard-label">
+                Priority
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-standard-label"
+                id="demo-simple-select-standard"
+                value={priority}
+                onChange={(e) => setPriority(e.target.value)}
+                label="Age"
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value={1}>Low</MenuItem>
+                <MenuItem value={2}>Medium</MenuItem>
+                <MenuItem value={3}>High</MenuItem>
+              </Select>
+            </FormControl>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCancel}>Cancel</Button>
+            <Button onClick={handleSubmit}>Submit</Button>
+          </DialogActions>
+        </Dialog>
         {tasks.map((task) => (
           <ListItem
             key={task.id}
@@ -224,7 +310,7 @@ function TaskList() {
                     color: "primary.contrastText",
                   }}
                 >
-                  {auth.currentUser?.displayName[0]}
+                  {auth.currentUser?.displayName?.charAt(0)}
                 </Avatar>
               </ListItemAvatar>
               <ListItemText

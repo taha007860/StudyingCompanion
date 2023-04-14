@@ -14,7 +14,7 @@ import PlaylistAddCheckIcon from "@mui/icons-material/PlaylistAddCheck";
 import TimerIcon from "@mui/icons-material/Timer";
 import { auth } from "../models/firebase";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [user, setUser] = useState(auth.currentUser);
@@ -53,21 +53,20 @@ const Header = () => {
             justifyContent: "flex-start",
           }}
         >
-          <Typography
-            component="a"
-            variant="h4"
-            href="/Home"
-            sx={{
-              color: "inherit",
-              textDecoration: "none",
-              "&:hover": {
-                color: "inherit",
-                textShadow: "0 0 0.5rem black",
-              },
-            }}
-          >
-            Studying Companion
-          </Typography>
+          <Link to="/Home" style={{ textDecoration: "none" }}>
+            <Typography
+              variant="h4"
+              sx={{
+                color: "white",
+                textDecoration: "none",
+                "&:hover": {
+                  textShadow: "0 0 0.5rem black",
+                },
+              }}
+            >
+              Studying Companion
+            </Typography>
+          </Link>
         </Container>
         <Container
           disableGutters
@@ -89,8 +88,15 @@ const Header = () => {
                   <TimerIcon sx={{ fontSize: 30 }} />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="My Account" onClick={() => navigate("/Account")}>
-                <IconButton>
+              <Tooltip title="My Account">
+                <IconButton
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  onClick={() => navigate("/Account")}
+                >
                   <Avatar
                     src={auth.currentUser?.photoURL}
                     sx={{

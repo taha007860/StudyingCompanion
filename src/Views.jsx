@@ -29,7 +29,10 @@ const Views = () => {
       <Route path="/Home" element={<Home />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/Timer" element={<Timer />} />
-        <Route path="/Account" element={<Account />} />
+        <Route path="/Account">
+          <Route index element={<Account />} />
+          <Route path="Settings" />
+        </Route>
         <Route path="/TaskList">
           <Route index element={<TaskList />} />
           <Route path=":id" element={<TaskDetails />} />
