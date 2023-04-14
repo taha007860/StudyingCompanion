@@ -50,13 +50,13 @@ import {
 
 function TaskList() {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [editing, setEditing] = useState(false);
   const [counter, setCounter] = useState(4);
   const [name, setName] = useState("");
   const [sharedWith, setSharedWith] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [taskListID, setTaskListID] = useState("");
   const [activeTask, setActiveTask] = useState("");
+  const [editing, setEditing] = useState(false);
 
   // The following are for creating a task
   const [open, setOpen] = useState(false);
@@ -134,10 +134,12 @@ function TaskList() {
   };
 
   const handleEdit = (task) => {
-    setEditing(true);
-    setName(activeTask.data().name);
-    setSharedWith(activeTask.data().sharedWith);
+    setTaskName(activeTask.data().name);
+    setTaskContent(activeTask.data().content);
+    setPriority(activeTask.data().priority);
     handleClose();
+    setEditing(true);
+    setOpen(true);
   };
 
   const handleDelete = () => {
@@ -167,33 +169,47 @@ function TaskList() {
   };
 
   const handleSubmit = () => {
-    const newTask = {
-      name: taskName,
-      status: "Not completed",
-      date: Timestamp.now().toDate(),
-      priority: priority,
-      content: taskContent,
-      sharedWith: [],
-    };
-
-    console.log("Task list ID: ", taskListID);
-    addDoc(tasksRef, newTask)
-      .then((docRef) => {
-        updateDoc(doc(db, "TaskList", taskListID), {
-          tasks: arrayUnion(docRef.id),
-        })
-          .then(() => {
-            update();
-            setCounter(counter + 1);
-            setOpen(false);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+    if (editing) {
+      updateDoc(doc(db, "tasks", activeTask.id), {
+        name: taskName,
+        content: taskContent,
+        priority: priority,
       })
-      .catch((error) => {
-        console.error(error);
-      });
+        .then(() => {
+          update();
+          setOpen(false);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      const newTask = {
+        name: taskName,
+        status: "Not completed",
+        date: Timestamp.now().toDate(),
+        priority: priority,
+        content: taskContent,
+        sharedWith: [],
+      };
+
+      console.log("Task list ID: ", taskListID);
+      addDoc(tasksRef, newTask)
+        .then((docRef) => {
+          updateDoc(doc(db, "TaskList", taskListID), {
+            tasks: arrayUnion(docRef.id),
+          })
+            .then(() => {
+              update();
+              setOpen(false);
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   };
 
   return (
@@ -240,7 +256,7 @@ function TaskList() {
               margin="dense"
               id="name"
               label="Task Name"
-              defaultValue="Task Name"
+              defaultValue={taskName}
               type="taskName"
               fullWidth
               variant="standard"
@@ -254,7 +270,7 @@ function TaskList() {
               label="Content"
               multiline
               rows={4}
-              defaultValue="Write a task description here!"
+              defaultValue={taskContent}
               fullWidth={true}
               required={true}
               onChange={(e) => {
