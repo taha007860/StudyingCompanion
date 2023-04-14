@@ -3,18 +3,16 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID"
+  apiKey: "AIzaSyBdDpc7e8oLR7TNbHToyOP_hVSF3u7d3Tk",
+  authDomain: "studying-companion.firebaseapp.com",
+  projectId: "studying-companion",
+  storageBucket: "studying-companion.appspot.com",
+  messagingSenderId: "816453069297",
+  appId: "1:816453069297:web:a5517687b0305b2746fc50",
+  measurementId: "G-HMMRDZB7C8",
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
-const db = getFirestore(app);
-
-export { auth, googleProvider, db };
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
+export const db = getFirestore(app);
