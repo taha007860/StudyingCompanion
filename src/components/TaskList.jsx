@@ -21,7 +21,6 @@ import {
   Button,
   TextField,
   DialogContent,
-  Slider,
   InputLabel,
   Select,
   FormControl,
@@ -32,8 +31,8 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import AddIcon from "@mui/icons-material/Add";
-import { Link, useNavigate } from "react-router-dom";
-import { Fragment, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { db } from "../models/firebase";
 import { auth } from "../models/firebase";
 import {
@@ -49,6 +48,7 @@ import {
   deleteDoc,
   arrayRemove,
   Timestamp,
+  getDoc,
 } from "firebase/firestore";
 
 function TaskList() {
@@ -121,29 +121,34 @@ function TaskList() {
   };
 
   useEffect(() => {
-    update();
+    return update();
   }, []);
 
   const handleClick = (event, task) => {
     setAnchorEl(event.currentTarget);
+    console.log(event.currentTarget);
     setActiveTask(task);
   };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleTaskDetails = () => {
-    navigate(`/TaskList/${activeTask.id}`);
+  const handleTaskDetails = (task) => {
+    if (activeTask) {
+      navigate(`/TaskList/${activeTask.id}`);
+    } else {
+      navigate(`/TaskList/${task.id}`);
+    }
   };
 
-  const handleShare = (task) => {
+  const handleShare = () => {
     setShareURL(`http://localhost:5173/TaskList/${activeTask.id}`);
     setShare(true);
     setVis(activeTask.data().public);
     handleClose();
   };
 
-  const handleEdit = (task) => {
+  const handleEdit = () => {
     setTaskName(activeTask.data().name);
     setTaskContent(activeTask.data().content);
     setPriority(activeTask.data().priority);
@@ -211,8 +216,20 @@ function TaskList() {
             tasks: arrayUnion(docRef.id),
           })
             .then(() => {
-              update();
-              handleCancel();
+              addDoc(collection(db, "tasks", docRef.id, "subTasks"), {
+                name: "Sample Subtask",
+                description: "This is a sample subtask. You can delete it.",
+                priority: "1",
+                dueDate: Timestamp.fromDate(new Date()).toDate(),
+                status: "Not completed",
+              })
+                .then(() => {
+                  update();
+                  handleCancel();
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
             })
             .catch((error) => {
               console.error(error);
@@ -259,7 +276,9 @@ function TaskList() {
       >
         <Container>
           <Typography variant="h5">Task List</Typography>
-          <Typography>{tasks.length} Tasks</Typography>
+          <Typography>
+            {tasks.length} Task{tasks.length > 1 ? "s" : ""}
+          </Typography>
         </Container>
         <IconButton size="large" aria-label="add task" onClick={handleAddTask}>
           <AddIcon />
@@ -354,7 +373,7 @@ function TaskList() {
                     onClick={() => {
                       navigator.clipboard
                         .writeText(shareURL)
-                        .then((r) => setSnack(true));
+                        .then(() => setSnack(true));
                     }}
                   >
                     <ContentCopyIcon></ContentCopyIcon>
@@ -363,7 +382,7 @@ function TaskList() {
               }}
             />
             <FormControlLabel
-              control={<Switch checked={vis} onChange={(e) => changeVis()} />}
+              control={<Switch checked={vis} onChange={() => changeVis()} />}
               label="Public"
             />
           </DialogContent>
@@ -396,7 +415,11 @@ function TaskList() {
               </IconButton>
             }
           >
-            <ListItemButton onClick={(e) => handleTaskDetails(e, task)}>
+            <ListItemButton
+              onClick={() => {
+                handleTaskDetails(task);
+              }}
+            >
               <ListItemAvatar>
                 <Avatar
                   sx={{

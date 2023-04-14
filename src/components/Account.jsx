@@ -32,8 +32,13 @@ export const Account = () => {
   }, []);
 
   const handleLogout = () => {
-    auth.signOut();
-    alert("logged out");
+    auth.signOut().then(() => {
+      alert("logged out");
+    }
+    ).catch((e) => {
+      console.error(e);
+    });
+
   };
   const handleSettings = () => {
     setShowSettings(!showSettings);

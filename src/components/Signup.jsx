@@ -73,6 +73,13 @@ export const Signup = () => {
                   userID: auth.currentUser.uid,
                   tasks: [taskID.id],
                 }).then((docid) => {
+                  addDoc(collection(db, "tasks", taskID.id, "subTasks"), {
+                    name: "Sample Subtask",
+                    description: "This is a sample subtask. You can delete it.",
+                    priority: "1",
+                    dueDate: Timestamp.fromDate(new Date()).toDate(),
+                    status: "Not completed",
+                  });
                   console.log("Document written with ID: ", docid.id);
                   const settingRef = addDoc(collection(db, "settings"), {
                     userID: auth.currentUser.uid,

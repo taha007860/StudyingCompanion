@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { auth, googleProvider } from "../models/firebase";
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import {
+  setPersistence,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  browserLocalPersistence,
+} from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -38,9 +43,11 @@ export const Login = () => {
     setPasswordError(null);
     await signInWithEmailAndPassword(auth, email, password)
       .then(() => {
-        setEmailError(null);
-        setPasswordError(null);
-        navigate("/Timer");
+        setPersistence(auth, browserLocalPersistence).then(() => {
+          setEmailError(null);
+          setPasswordError(null);
+          navigate("/Timer");
+        });
       })
       .catch((e) => {
         setLoading(false);

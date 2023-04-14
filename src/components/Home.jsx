@@ -9,7 +9,7 @@ import {
   Button,
   Avatar,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import joe from "../../assets/Joe.jpg";
@@ -19,7 +19,7 @@ import zaatar from "../../assets/Zaatar.jpg";
 export const Home = () => {
   const navigate = useNavigate();
   const handleLogin = async () => {
-    navigate("../auth");
+    navigate("/auth");
   };
   return (
     <div>
@@ -110,7 +110,7 @@ export const Home = () => {
             </Accordion>
           </Box>
         </Grid>
-        <Grid f item xs={6}>
+        <Grid item xs={6}>
           <Button
             variant="contained"
             sx={{

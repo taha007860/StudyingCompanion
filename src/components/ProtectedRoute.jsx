@@ -7,7 +7,7 @@ const ProtectedRoute = () => {
 
   useEffect(() => {
     const update = auth.onAuthStateChanged((user) => {
-      setUser(user);
+      user ? setUser(user) : setUser(null);
     });
     return () => {
       update();

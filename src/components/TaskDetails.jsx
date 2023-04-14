@@ -9,14 +9,26 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
+  Container,
+  Skeleton,
 } from "@mui/material";
 import { Email, Facebook, Twitter, Instagram } from "@mui/icons-material";
-import defaultTasks from "./defaultTasks";
 import { useParams } from "react-router-dom";
+import {
+  collection,
+  documentId,
+  getDocs,
+  query,
+  where,
+  getDoc,
+  doc,
+} from "firebase/firestore";
+import { db } from "../models/firebase";
 
 export const TaskDetails = () => {
   // Setting up state for tasks, filter type and value, filtered tasks, edited task and share modal
-  const [tasks, setTasks] = useState(defaultTasks);
+  const [tasks, setTasks] = useState([]);
   const [filterType, setFilterType] = useState("status");
   const [filterValue, setFilterValue] = useState("");
   const [filteredTasks, setFilteredTasks] = useState(null);
@@ -24,32 +36,67 @@ export const TaskDetails = () => {
   const [editedTask, setEditedTask] = useState({});
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [taskID, setTaskID] = useState(useParams());
+  const [mainTask, setMainTask] = useState({});
+
+  const subtasksRef = collection(db, "tasks", taskID.id, "subTasks");
+
+  const getMainTask = async () => {
+    const docRef = doc(db, "tasks", taskID.id);
+    const docSnap = await getDoc(docRef);
+    setMainTask(docSnap);
+  };
+  const update = () => {
+    let tasks = [];
+
+    getMainTask();
+
+    const fetchTasks = async () => {
+      const taskSnapshot = await getDocs(query(subtasksRef));
+      taskSnapshot.forEach((task) => {
+        tasks.push(task);
+      });
+    };
+
+    fetchTasks()
+      .then(() => {
+        console.log("Successfully fetched tasks");
+        setTasks(tasks);
+        const filteredTasks = tasks.filter((task) => {
+          if (filterValue.trim() === "") {
+            return true;
+          }
+
+          if (filterType === "status") {
+            return task.status
+              .toLowerCase()
+              .includes(filterValue.toLowerCase());
+          } else if (filterType === "priority") {
+            return task.priority
+              .toLowerCase()
+              .includes(filterValue.toLowerCase());
+          } else if (filterType === "name") {
+            return task.name.toLowerCase().includes(filterValue.toLowerCase());
+          } else if (filterType === "description") {
+            return task.description
+              .toLowerCase()
+              .includes(filterValue.toLowerCase());
+          }
+
+          return false;
+        });
+
+        // Updating filtered tasks state
+        setFilteredTasks(filteredTasks.length >= 0 ? filteredTasks : null);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   // Filtering tasks based on filter type and value
   useEffect(() => {
-    // const filteredTasks = tasks.filter((task) => {
-    //   if (filterValue.trim() === "") {
-    //     return true;
-    //   }
-    //
-    //   if (filterType === "status") {
-    //     return task.status.toLowerCase().includes(filterValue.toLowerCase());
-    //   } else if (filterType === "priority") {
-    //     return task.priority.toLowerCase().includes(filterValue.toLowerCase());
-    //   } else if (filterType === "name") {
-    //     return task.name.toLowerCase().includes(filterValue.toLowerCase());
-    //   } else if (filterType === "description") {
-    //     return task.description
-    //       .toLowerCase()
-    //       .includes(filterValue.toLowerCase());
-    //   }
-    //
-    //   return false;
-    // });
-    //
-    // // Updating filtered tasks state
-    // setFilteredTasks(filteredTasks.length > 0 ? filteredTasks : null);
-  }, [taskID]);
+    return update();
+  }, []);
 
   // Handling filter type change
   const handleFilterTypeChange = (event) => {
@@ -105,9 +152,11 @@ export const TaskDetails = () => {
       setEditedTask({ ...editedTask, [key]: value });
     };
   return (
-    <div>
-      <h1>Task Details</h1>
-      <div>
+    <Container>
+      <Typography variant="h3" align="center" my="2rem">
+        {mainTask.data && mainTask.data().name}
+      </Typography>
+      <Container>
         <select value={filterType} onChange={handleFilterTypeChange}>
           <option value="status">Status</option>
           <option value="priority">Priority</option>
@@ -119,7 +168,7 @@ export const TaskDetails = () => {
         <Button variant="contained" onClick={handleShareClick}>
           Share
         </Button>
-      </div>
+      </Container>
       <TableContainer>
         <Table>
           <TableHead>
@@ -129,15 +178,13 @@ export const TaskDetails = () => {
               <TableCell>Due Date</TableCell>
               <TableCell>Priority</TableCell>
               <TableCell>Status</TableCell>
-              <TableCell>Progress</TableCell>
-              <TableCell>Shared With</TableCell>
               <TableCell style={{ paddingLeft: "60px" }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredTasks &&
               filteredTasks.map((task, index) => (
-                <TableRow key={index}>
+                <TableRow key={task.id}>
                   <TableCell>
                     {editTaskIndex === index ? (
                       <TextField
@@ -145,17 +192,17 @@ export const TaskDetails = () => {
                         onChange={handleInputChange("name")}
                       />
                     ) : (
-                      task.name
+                      task.data().name
                     )}
                   </TableCell>
                   <TableCell>
                     {editTaskIndex === index ? (
                       <TextField
-                        value={editedTask.description}
+                        value={editedTask.data().description}
                         onChange={handleInputChange("description")}
                       />
                     ) : (
-                      task.description
+                      task.data().description
                     )}
                   </TableCell>
                   <TableCell>
@@ -165,7 +212,7 @@ export const TaskDetails = () => {
                         onChange={handleInputChange("dueDate")}
                       />
                     ) : (
-                      task.dueDate
+                      task.data().dueDate.toDate().toDateString()
                     )}
                   </TableCell>
                   <TableCell>
@@ -175,7 +222,7 @@ export const TaskDetails = () => {
                         onChange={handleInputChange("priority")}
                       />
                     ) : (
-                      task.priority
+                      task.data().priority
                     )}
                   </TableCell>
                   <TableCell>
@@ -185,27 +232,7 @@ export const TaskDetails = () => {
                         onChange={handleInputChange("status")}
                       />
                     ) : (
-                      task.status
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {editTaskIndex === index ? (
-                      <TextField
-                        value={editedTask.progress}
-                        onChange={handleInputChange("progress")}
-                      />
-                    ) : (
-                      task.progress
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {editTaskIndex === index ? (
-                      <TextField
-                        value={editedTask.sharedWith}
-                        onChange={handleInputChange("sharedWith")}
-                      />
-                    ) : (
-                      task.sharedWith
+                      task.data().status
                     )}
                   </TableCell>
                   <TableCell>
@@ -232,22 +259,22 @@ export const TaskDetails = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Modal open={isShareModalOpen} onClose={() => setIsShareModalOpen(false)}>
-        <div>
-          <Button variant="contained" startIcon={<Email />}>
-            Gmail
-          </Button>
-          <Button variant="contained" startIcon={<Facebook />}>
-            Facebook
-          </Button>
-          <Button variant="contained" startIcon={<Twitter />}>
-            Twitter
-          </Button>
-          <Button variant="contained" startIcon={<Instagram />}>
-            Instagram
-          </Button>
-        </div>
-      </Modal>
-    </div>
+      {/*<Modal open={isShareModalOpen} onClose={() => setIsShareModalOpen(false)}>*/}
+      {/*  <div>*/}
+      {/*    <Button variant="contained" startIcon={<Email />}>*/}
+      {/*      Gmail*/}
+      {/*    </Button>*/}
+      {/*    <Button variant="contained" startIcon={<Facebook />}>*/}
+      {/*      Facebook*/}
+      {/*    </Button>*/}
+      {/*    <Button variant="contained" startIcon={<Twitter />}>*/}
+      {/*      Twitter*/}
+      {/*    </Button>*/}
+      {/*    <Button variant="contained" startIcon={<Instagram />}>*/}
+      {/*      Instagram*/}
+      {/*    </Button>*/}
+      {/*  </div>*/}
+      {/*</Modal>*/}
+    </Container>
   );
 };
