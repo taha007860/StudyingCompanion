@@ -325,16 +325,20 @@ function TaskList() {
                   >
                     <Box sx={{ mb: 1, ml: -18 }}>shared with</Box>
                     <Box
-                      sx={{ display: "flex", alignItems: "center", ml: -17 }}
+                      sx={{ display: "flex", alignItems: "center", ml: -21.75 }}
                     >
-                      {task.data().sharedWith.map((user, index) => (
-                        <Avatar
-                          key={index}
-                          sx={{ ml: 1 }}
-                          alt={user}
-                          src={`https://i.pravatar.cc/32?u=${user}`}
-                        />
-                      ))}
+                      {task.data().sharedWith.length > 0
+                        ? task
+                            .data()
+                            .sharedWith.map((user, index) => (
+                              <Avatar
+                                key={index}
+                                sx={{ ml: 1 }}
+                                alt={user}
+                                src={`https://i.pravatar.cc/32?u=${user}`}
+                              />
+                            ))
+                        : "No one"}
                     </Box>
                   </Box>
                 }
@@ -343,11 +347,12 @@ function TaskList() {
               <Stack direction="row" alignItems="center" spacing={1}>
                 <LinearProgress
                   variant="determinate"
-                  value={task.data().progress}
+                  value={0}
                   sx={{ width: 100 }}
                 />
                 <Typography variant="body2" color="text.secondary">
-                  {`${task.data().progress}%`}
+                  {/*{`${task.data().progress}%`}*/}
+                  0%
                 </Typography>
               </Stack>
             </ListItemButton>
