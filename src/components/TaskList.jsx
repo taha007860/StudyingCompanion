@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
+import { Link } from "react-router-dom";
 import { Fragment, useEffect, useState } from "react";
 import defaultTasks from "./defaultTasks";
 import { db } from "../models/firebase";
