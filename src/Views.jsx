@@ -8,6 +8,7 @@ import { Login } from "./components/Login";
 import { Home } from "./components/Home";
 import { Account } from "./components/Account";
 import { Typography } from "@mui/material";
+import { TaskDetails } from "./components/TaskDetails";
 
 const handle404 = () => {
   return (
@@ -29,7 +30,10 @@ const Views = () => {
       <Route element={<ProtectedRoute />}>
         <Route path="/Timer" element={<Timer />} />
         <Route path="/Account" element={<Account />} />
-        <Route path="/TaskList" element={<TaskList />} />
+        <Route path="/TaskList">
+          <Route index element={<TaskList />} />
+          <Route path=":id" element={<TaskDetails />} />
+        </Route>
       </Route>
       <Route path="*" element={handle404()} />
     </Routes>

@@ -54,7 +54,7 @@ export const Signup = () => {
               public: false,
               userID: auth.currentUser.uid,
               tasks: [
-                "0gmIiaHKlDVgl2iU24ML",
+                "z1X0rMWLSUoxIEAa0koX",
                 "61EenH5OK60HqGQ9Nstd",
                 "Kzvb7v7u8U0vbLfCA4aK",
               ],
