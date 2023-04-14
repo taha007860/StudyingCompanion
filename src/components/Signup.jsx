@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { auth, googleProvider } from "../models/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -40,44 +40,65 @@ export const Signup = () => {
   };
 
   const handleSignUp = async () => {
+    console.log(Timestamp.fromDate(new Date()).toDate());
+    const sampleTask = {
+      name: `Sample Task`,
+      status: "Not completed",
+      date: Timestamp.fromDate(new Date()).toDate(),
+      priority: "1",
+      public: false,
+      content: "This is a sample task. You can delete it.",
+      sharedWith: [],
+    };
+
     setLoading(true);
     setEmailError(null);
     setPasswordError(null);
-    console.log(auth);
+
     await createUserWithEmailAndPassword(auth, email, password)
       .then(() => {
+        if (displayName === "User") {
+          const s = email.substring(0, email.lastIndexOf("@"));
+          setDisplayName(s);
+        }
         updateProfile(auth.currentUser, {
           displayName: displayName,
         })
           .then(() => {
-            const docRef = addDoc(collection(db, "TaskList"), {
-              public: false,
-              userID: auth.currentUser.uid,
-              tasks: [
-                "z1X0rMWLSUoxIEAa0koX",
-                "61EenH5OK60HqGQ9Nstd",
-                "Kzvb7v7u8U0vbLfCA4aK",
-              ],
-            }).then(() => {
-              console.log("Document written with ID: ", docRef.id);
-              const settingRef = addDoc(collection(db, "settings"), {
-                userID: auth.currentUser.uid,
-                pomdoroLevel: "",
-                settingOne: "false",
-              })
-                .then(() => {
-                  console.log("Default settings applied.");
-                  setEmailError(null);
-                  setPasswordError(null);
-                  navigate("/Timer");
-                  console.log(auth);
-                })
-                .catch((e) => {
-                  console.error(e);
+            const taskRef = addDoc(collection(db, "tasks"), sampleTask)
+              .then((taskID) => {
+                console.log("Sample task written with ID: ", taskID.id);
+                const docRef = addDoc(collection(db, "TaskList"), {
+                  public: false,
+                  userID: auth.currentUser.uid,
+                  tasks: [taskID.id],
+                }).then((docid) => {
+                  console.log("Document written with ID: ", docid.id);
+                  const settingRef = addDoc(collection(db, "settings"), {
+                    userID: auth.currentUser.uid,
+                    pomdoroLevel: "",
+                    settingOne: "false",
+                  })
+                    .then(() => {
+                      console.log("Default settings applied.");
+                      setEmailError(null);
+                      setPasswordError(null);
+                      navigate("/Timer");
+                      console.log(auth);
+                    })
+                    .catch((e) => {
+                      setLoading(false);
+                      console.error(e);
+                    });
                 });
-            });
+              })
+              .catch((e) => {
+                setLoading(false);
+                console.error(e);
+              });
           })
           .catch((e) => {
+            setLoading(false);
             console.error(e);
           });
       })
