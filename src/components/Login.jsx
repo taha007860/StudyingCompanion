@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { auth, googleProvider } from "../models/firebase";
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import {
+  setPersistence,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  browserLocalPersistence,
+} from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import {
   Button,

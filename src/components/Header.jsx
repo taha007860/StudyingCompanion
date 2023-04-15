@@ -9,7 +9,6 @@ import {
   Tooltip,
   Avatar,
 } from "@mui/material";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PlaylistAddCheckIcon from "@mui/icons-material/PlaylistAddCheck";
 import TimerIcon from "@mui/icons-material/Timer";
 import { auth } from "../models/firebase";

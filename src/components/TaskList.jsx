@@ -21,7 +21,6 @@ import {
   Button,
   TextField,
   DialogContent,
-  Slider,
   InputLabel,
   Select,
   FormControl,
@@ -32,9 +31,8 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import AddIcon from "@mui/icons-material/Add";
-import { Link, useNavigate } from "react-router-dom";
-import { Fragment, useEffect, useState } from "react";
-import defaultTasks from "./defaultTasks";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { db } from "../models/firebase";
 import { auth } from "../models/firebase";
 import {
@@ -50,13 +48,11 @@ import {
   deleteDoc,
   arrayRemove,
   Timestamp,
+  getDoc,
 } from "firebase/firestore";
 
 function TaskList() {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [counter, setCounter] = useState(4);
-  const [name, setName] = useState("");
-  const [sharedWith, setSharedWith] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [taskListID, setTaskListID] = useState("");
   const [activeTask, setActiveTask] = useState("");
@@ -125,29 +121,38 @@ function TaskList() {
   };
 
   useEffect(() => {
-    update();
+    try {
+      return update();
+    } catch (error) {
+      console.error(error);
+    }
   }, []);
 
   const handleClick = (event, task) => {
     setAnchorEl(event.currentTarget);
+    console.log(event.currentTarget);
     setActiveTask(task);
   };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleTaskDetails = () => {
-    navigate(`/TaskList/${activeTask.id}`);
+  const handleTaskDetails = (task) => {
+    if (activeTask) {
+      navigate(`/TaskList/${activeTask.id}`);
+    } else {
+      navigate(`/TaskList/${task.id}`);
+    }
   };
 
-  const handleShare = (task) => {
+  const handleShare = () => {
     setShareURL(`http://localhost:5173/TaskList/${activeTask.id}`);
     setShare(true);
     setVis(activeTask.data().public);
     handleClose();
   };
 
-  const handleEdit = (task) => {
+  const handleEdit = () => {
     setTaskName(activeTask.data().name);
     setTaskContent(activeTask.data().content);
     setPriority(activeTask.data().priority);
@@ -199,7 +204,7 @@ function TaskList() {
         });
     } else {
       const newTask = {
-        name: taskName,
+        name: taskName || `Task #${tasks.length + 1}`,
         status: "Not completed",
         date: Timestamp.fromDate(new Date()).toDate(),
         priority: priority,
@@ -215,8 +220,20 @@ function TaskList() {
             tasks: arrayUnion(docRef.id),
           })
             .then(() => {
-              update();
-              handleCancel();
+              addDoc(collection(db, "tasks", docRef.id, "subTasks"), {
+                name: "Sample Subtask",
+                description: "This is a sample subtask. You can delete it.",
+                priority: "1",
+                dueDate: Timestamp.fromDate(new Date()).toDate(),
+                status: "Not completed",
+              })
+                .then(() => {
+                  update();
+                  handleCancel();
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
             })
             .catch((error) => {
               console.error(error);
@@ -263,7 +280,9 @@ function TaskList() {
       >
         <Container>
           <Typography variant="h5">Task List</Typography>
-          <Typography>{tasks.length} Tasks</Typography>
+          <Typography>
+            {tasks.length} Task{tasks.length > 1 ? "s" : ""}
+          </Typography>
         </Container>
         <IconButton size="large" aria-label="add task" onClick={handleAddTask}>
           <AddIcon />
@@ -358,7 +377,7 @@ function TaskList() {
                     onClick={() => {
                       navigator.clipboard
                         .writeText(shareURL)
-                        .then((r) => setSnack(true));
+                        .then(() => setSnack(true));
                     }}
                   >
                     <ContentCopyIcon></ContentCopyIcon>
@@ -367,7 +386,7 @@ function TaskList() {
               }}
             />
             <FormControlLabel
-              control={<Switch checked={vis} onChange={(e) => changeVis()} />}
+              control={<Switch checked={vis} onChange={() => changeVis()} />}
               label="Public"
             />
           </DialogContent>
@@ -400,7 +419,11 @@ function TaskList() {
               </IconButton>
             }
           >
-            <ListItemButton onClick={(e) => handleTaskDetails(e, task)}>
+            <ListItemButton
+              onClick={() => {
+                handleTaskDetails(task);
+              }}
+            >
               <ListItemAvatar>
                 <Avatar
                   sx={{
@@ -423,7 +446,10 @@ function TaskList() {
                       flexDirection: "column",
                     }}
                   >
-                    <Typography>Description: {task.data().content}</Typography>
+                    <Typography>
+                      {task.data().content &&
+                        "Description: " + task.data().content}
+                    </Typography>
                     <Box sx={{ mb: 1, ml: -18, my: ".5rem" }}>Shared with</Box>
                     <Box
                       sx={{ display: "flex", alignItems: "center", ml: -21.75 }}
