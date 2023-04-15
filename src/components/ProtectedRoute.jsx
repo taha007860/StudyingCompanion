@@ -1,18 +1,13 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { auth } from "../models/firebase";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const ProtectedRoute = () => {
-  const [user, setUser] = useState(auth.currentUser);
+  const [user, setUser] = useState();
 
-  useEffect(() => {
-    const update = auth.onAuthStateChanged((user) => {
-      user ? setUser(user) : setUser(null);
-    });
-    return () => {
-      update();
-    };
-  }, []);
+  auth.onAuthStateChanged((user) => {
+    setUser(user);
+  });
 
   return user === null ? <Navigate to="/auth" /> : <Outlet />;
 };

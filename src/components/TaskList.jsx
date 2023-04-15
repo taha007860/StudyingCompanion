@@ -121,7 +121,11 @@ function TaskList() {
   };
 
   useEffect(() => {
-    return update();
+    try {
+      return update();
+    } catch (error) {
+      console.error(error);
+    }
   }, []);
 
   const handleClick = (event, task) => {

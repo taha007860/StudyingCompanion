@@ -43,11 +43,9 @@ export const Login = () => {
     setPasswordError(null);
     await signInWithEmailAndPassword(auth, email, password)
       .then(() => {
-        setPersistence(auth, browserLocalPersistence).then(() => {
-          setEmailError(null);
-          setPasswordError(null);
-          navigate("/Timer");
-        });
+        setEmailError(null);
+        setPasswordError(null);
+        navigate("/Timer");
       })
       .catch((e) => {
         setLoading(false);
