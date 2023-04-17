@@ -15,21 +15,53 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import joe from "../../assets/Joe.jpg";
 import adam from "../../assets/Adam.jpg";
 import zaatar from "../../assets/Zaatar.jpg";
+import { useEffect, useState } from "react";
 
 export const Home = () => {
   const navigate = useNavigate();
   const handleLogin = async () => {
     navigate("/auth");
   };
+  const [quote, setQuote] = useState([]);
+  const [wordLimitPass, setWord] = useState(true);
+  const fetchData = () => {
+    return fetch(
+      "https://api.api-ninjas.com/v1/quotes?limit=1category=knowledge",
+      {
+        headers: {
+          "X-Api-Key": "3p67WCRBW/amdiPOIQWKAg==wPzN4v1uZF34uOzG",
+        },
+      }
+    );
+  };
+
+  useEffect(() => {
+    fetchData()
+      .then((response) => response.json())
+      .then((data) => setQuote(data))
+      .catch((error) => console.log("Error", error.message));
+  }, []);
+
   return (
     <div>
-      <Box sx={{ ml: 3, width: 1 / 2, mt: 6, fontFamily: "Open Sans" }}>
-        <Typography variant="h6">Studying Companion</Typography>
-        <Typography variant="h7" sx={{ ml: "0px" }}>
-          An educational software that aims at aiding the average student to
-          focus especially since seeing an increase in ADHD prevalence in
-          children aged 4 to 17.
-        </Typography>
+      <Box sx={{ ml: 3, mt: 6, fontFamily: "Open Sans" }}>
+        <Grid container columnSpacing={6}>
+          <Grid item xs={6}>
+            <Typography variant="h6">Studying Companion</Typography>
+            <Typography variant="h7" sx={{ ml: "0px" }}>
+              An educational software that aims at aiding the average student to
+              focus especially since seeing an increase in ADHD prevalence in
+              children aged 4 to 17.
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography> {quote[0] ? quote[0].quote : "Loading"}</Typography>
+            <Typography align="right">
+              &quot;{quote[0] && wordLimitPass ? quote[0].author : "Loading..."}
+              &quot;
+            </Typography>
+          </Grid>
+        </Grid>
       </Box>
       <Grid container spacing={3}>
         <Grid item xs={6}>
