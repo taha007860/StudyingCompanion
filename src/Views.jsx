@@ -5,7 +5,7 @@ import TaskList from "./components/TaskList";
 import Timer from "./components/Timer";
 import { Signup } from "./components/Signup";
 import { Login } from "./components/Login";
-import { Home } from "./components/Home";
+import Home from "./components/Home";
 import { Account } from "./components/Account";
 import { Typography } from "@mui/material";
 import { TaskDetails } from "./components/TaskDetails";
