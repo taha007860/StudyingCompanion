@@ -474,6 +474,7 @@ function TaskList() {
                     <Typography
                       sx={{
                         ml: "0rem",
+                        mt: "1rem"
                       }}
                     >
                       Created on: {task.data().date.toDate().toDateString()}
