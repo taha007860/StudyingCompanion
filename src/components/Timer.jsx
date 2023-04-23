@@ -145,11 +145,13 @@ const Timer = () => {
     <div>
       <Box
         sx={{
-          backgroundColor: "#D9D9D9",
+          backgroundColor: "#e3f2fd",
           height: "300px",
           width: "600px",
           mx: "auto",
           mt: "50px",
+          borderRadius: 4,
+          boxShadow: 2,
         }}
       >
         <Box display="flex" sx={{ flexDirection: "column" }}>
@@ -162,7 +164,8 @@ const Timer = () => {
             placeholder="Enter Time"
             value={inputTime}
             onChange={handleInputChange}
-            sx={{ width: "130px", mx: "auto" }}
+            sx={{ width: "130px", mx: "auto", bgcolor: "#FFFFFF", mt: "10px" }}
+            size={"small"}
           />
           <Grid mt="30px" display="flex" mb="20px" mx="auto">
             <Typography sx={{ fontSize: "40px" }}>
@@ -206,7 +209,9 @@ const Timer = () => {
       </Box>
       <Box
         sx={{
-          backgroundColor: "#D9D9D9",
+          backgroundColor: "#e3f2fd",
+          borderRadius: 4,
+          boxShadow: 2,
           height: "100px",
           width: "600px",
           mx: "auto",
