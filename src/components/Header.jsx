@@ -98,23 +98,10 @@ const Header = () => {
                 >
                   <Avatar
                     src={auth.currentUser?.photoURL}
-                    sx={{
-                      fontSize: 25,
-                      marginBottom: "1.5rem",
-                    }}
+                    sx={{ width: "30px", height: "30px" }}
                   >
                     {auth.currentUser?.displayName?.charAt(0)}
                   </Avatar>
-                  <Typography
-                    variant="subtitle1"
-                    sx={{
-                      marginTop: "3rem",
-                      fontWeight: "bold",
-                      marginLeft: "-2.85rem",
-                    }}
-                  >
-                    {auth.currentUser?.displayName}
-                  </Typography>
                 </IconButton>
               </Tooltip>
               <Tooltip title="Logout">
