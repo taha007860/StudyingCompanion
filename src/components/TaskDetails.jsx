@@ -13,7 +13,7 @@ import {
   Container,
   Skeleton,
 } from "@mui/material";
-import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { Email, Facebook, Twitter, Instagram } from "@mui/icons-material";
 import { useParams } from "react-router-dom";
 import {
@@ -24,6 +24,11 @@ import {
   where,
   getDoc,
   doc,
+  deleteDoc,
+  updateDoc,
+  arrayRemove,
+  addDoc,
+  Timestamp,
 } from "firebase/firestore";
 import { db } from "../models/firebase";
 import styled from "styled-components";
@@ -107,35 +112,35 @@ export const TaskDetails = () => {
     setFilteredTasks(null);
   };
   const StyledTableCell = styled(TableCell)`
-  font-weight: bold;
-  text-transform: uppercase;
-`;
-const StyledTableActionsCell = styled(TableCell)`
-  display: flex;
-  justify-content: space-between;
-`;
-const StyledTableButton = styled(Button)`
-  margin-right: 10px;
-`;
-const TableWrapper = styled(TableContainer)`
-  max-height: 500px;
-  overflow-y: scroll;
-`;
-const ClearFilterButton = styled(Button)`
-  margin-right: 16px;
-`;
-const ShareButton = styled(Button)`
-  background-color: #1976d2;
-  color: #fff;
-  &:hover {
-    background-color: #1565c0;
-  }
-`;
- const statusColors = {
-  "Not completed": "#f44336",
-  "In progress": "#ff9800",
-  "Completed": "#4caf50"
-};
+    font-weight: bold;
+    text-transform: uppercase;
+  `;
+  const StyledTableActionsCell = styled(TableCell)`
+    display: flex;
+    justify-content: space-between;
+  `;
+  const StyledTableButton = styled(Button)`
+    margin-right: 10px;
+  `;
+  const TableWrapper = styled(TableContainer)`
+    max-height: 500px;
+    overflow-y: scroll;
+  `;
+  const ClearFilterButton = styled(Button)`
+    margin-right: 16px;
+  `;
+  const ShareButton = styled(Button)`
+    background-color: #1976d2;
+    color: #fff;
+    &:hover {
+      background-color: #1565c0;
+    }
+  `;
+  const statusColors = {
+    "Not completed": "#f44336",
+    "In progress": "#ff9800",
+    Completed: "#4caf50",
+  };
 
   // Handling filter value change
   const handleFilterValueChange = (event) => {
@@ -168,10 +173,15 @@ const ShareButton = styled(Button)`
     setEditTaskIndex(-1);
     setEditedTask({});
   };
-  const deleteTask = (index) => {
-    const newTasks = [...tasks];
-    newTasks.splice(index, 1);
-    setTasks(newTasks);
+  const deleteTask = (task) => {
+    deleteDoc(doc(db, "tasks", taskID.id, "subTasks", task.id))
+      .then((r) => {
+        update();
+        console.log(r);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
   const handleShareClick = () => {
     setIsShareModalOpen(true);
@@ -190,24 +200,28 @@ const ShareButton = styled(Button)`
       </Typography>
       <Container>
         <FormControl variant="outlined" sx={{ minWidth: 120 }}>
-  <InputLabel id="filter-type-label">Filter Type</InputLabel>
-  <Select
-    labelId="filter-type-label"
-    id="filter-type"
-    value={filterType}
-    onChange={handleFilterTypeChange}
-    label="Filter Type"
-    sx={{ minWidth: 120 }}
-  >
-    <MenuItem value="status">Status</MenuItem>
-    <MenuItem value="priority">Priority</MenuItem>
-    <MenuItem value="name">Name</MenuItem>
-    <MenuItem value="description">Description</MenuItem>
-  </Select>
-</FormControl>
+          <InputLabel id="filter-type-label">Filter Type</InputLabel>
+          <Select
+            labelId="filter-type-label"
+            id="filter-type"
+            value={filterType}
+            onChange={handleFilterTypeChange}
+            label="Filter Type"
+            sx={{ minWidth: 120 }}
+          >
+            <MenuItem value="status">Status</MenuItem>
+            <MenuItem value="priority">Priority</MenuItem>
+            <MenuItem value="name">Name</MenuItem>
+            <MenuItem value="description">Description</MenuItem>
+          </Select>
+        </FormControl>
         <TextField value={filterValue} onChange={handleFilterValueChange} />
-        <ClearFilterButton onClick={handleClearFilter}>Clear Filter</ClearFilterButton>
-<ShareButton variant="contained" onClick={handleShareClick}>Share</ShareButton>
+        <ClearFilterButton onClick={handleClearFilter}>
+          Clear Filter
+        </ClearFilterButton>
+        <ShareButton variant="contained" onClick={handleShareClick}>
+          Share
+        </ShareButton>
       </Container>
       <TableWrapper>
         <Table>
@@ -218,7 +232,9 @@ const ShareButton = styled(Button)`
               <StyledTableCell>Due Date</StyledTableCell>
               <StyledTableCell>Priority</StyledTableCell>
               <StyledTableCell>Status</StyledTableCell>
-              <StyledTableCell style={{ paddingLeft: "60px" }}>Actions</StyledTableCell>
+              <StyledTableCell style={{ paddingLeft: "60px" }}>
+                Actions
+              </StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -275,31 +291,35 @@ const ShareButton = styled(Button)`
                       task.data().status
                     )}
                   </TableCell>
-                 <StyledTableActionsCell>
-                  {editTaskIndex === index ? (
-                    <>
-                      <StyledTableButton onClick={() => handleSaveTask(index)}>
-                        Save
-                      </StyledTableButton>
-                      <StyledTableButton onClick={handleCancelEdit}>
-                        Cancel
-                      </StyledTableButton>
-                    </>
-                  ) : (
-                    <>
-                      <StyledTableButton onClick={() => handleEditTask(index, task)}>
-                        Edit
-                      </StyledTableButton>
-                      <StyledTableButton onClick={() => deleteTask(index)}>
-                        Delete
-                      </StyledTableButton>
-                    </>
-                  )}
-                </StyledTableActionsCell>
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
+                  <StyledTableActionsCell>
+                    {editTaskIndex === index ? (
+                      <>
+                        <StyledTableButton
+                          onClick={() => handleSaveTask(index)}
+                        >
+                          Save
+                        </StyledTableButton>
+                        <StyledTableButton onClick={handleCancelEdit}>
+                          Cancel
+                        </StyledTableButton>
+                      </>
+                    ) : (
+                      <>
+                        <StyledTableButton
+                          onClick={() => handleEditTask(index, task)}
+                        >
+                          Edit
+                        </StyledTableButton>
+                        <StyledTableButton onClick={() => deleteTask(task)}>
+                          Delete
+                        </StyledTableButton>
+                      </>
+                    )}
+                  </StyledTableActionsCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
       </TableWrapper>
       {/*<Modal open={isShareModalOpen} onClose={() => setIsShareModalOpen(false)}>*/}
       {/*  <div>*/}
