@@ -2,8 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import "../styles/App.css";
 import "../styles/Timer.css";
+import {
+  updateDoc,
+  getDocs,
+  collection,
+  query,
+  where,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+import { db } from "../models/firebase";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const Timer = () => {
+  const [total, setTotal] = useState(0);
+  const [showTotal, setShow] = useState(false);
   const [active, setActive] = useState("");
   const [level, setLevel] = useState("Custom");
   const [disabled, setDisabled] = useState(false);
@@ -18,7 +31,8 @@ const Timer = () => {
     seconds: 0,
   });
   const [breakString, setBreakString] = useState("");
-
+  const [workTime, setWorkTime] = useState(0); //for firestore
+  const [breakTimer, setBreakTimer] = useState(0); //For fireStore
   useEffect(() => {
     const [inputMinutes, inputSeconds] = inputTime.split(":"); //Split minutes from seconds
     setTimeLeft({
@@ -26,6 +40,20 @@ const Timer = () => {
       seconds: parseInt(inputSeconds) || 0, //Same for seconds
     });
   }, [inputTime]); //Each time inputTime changes Run effect.
+  const updateFireStore = async (Time, userid) => {
+    const document = doc(db, "Timer", userid);
+    const docSnap = await getDoc(document);
+    let usertime = 0;
+
+    if (docSnap.exists()) {
+      const worktime = docSnap.get("Worktime");
+      console.log(worktime);
+      usertime = worktime + Time;
+      console.log(usertime);
+      await updateDoc(document, { Worktime: usertime });
+      await setWorkTime(0);
+    }
+  };
 
   useEffect(() => {
     let timer;
@@ -37,6 +65,7 @@ const Timer = () => {
             timeLeft.seconds > 0 ? timeLeft.minutes : timeLeft.minutes - 1,
           seconds: timeLeft.seconds > 0 ? timeLeft.seconds - 1 : 59,
         });
+        setWorkTime(workTime + 1);
       }, 1000);
     } else if (
       !Customed &&
@@ -45,6 +74,13 @@ const Timer = () => {
       timeLeft.minutes === 0 &&
       timeLeft.seconds === 0
     ) {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          const uid = user.uid;
+          updateFireStore(workTime, uid);
+        }
+      });
       // Timer has ended, reset to break time
       setCountdown(false);
       setInputTime(breakTime);
@@ -57,8 +93,35 @@ const Timer = () => {
       setTimerRunning(false);
       return () => clearTimeout(timer);
     }
-  }, [timeLeft, timerRunning, countdown, breakTime, Customed]);
+  }, [timeLeft, timerRunning, countdown, breakTime, Customed, workTime]);
+  useEffect(() => {
+    const auth = getAuth();
+    if (timeLeft.minutes === 0 && timeLeft.seconds === 0) {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          const uid = user.uid;
+          updateFireStore(workTime, uid);
+        }
+      });
+    }
+  }, [timerRunning, timeLeft]);
 
+  const handleTotal = () => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const uid = user.uid;
+        const document = doc(db, "Timer", uid);
+        const docSnap = await getDoc(document);
+        if (docSnap.exists()) {
+          const worktime = docSnap.get("Worktime");
+          setTotal(worktime);
+          setShow(true);
+          console.log(worktime);
+        }
+      }
+    });
+  };
   const handleInputChange = (event) => {
     setInputTime(event.target.value);
   };
@@ -69,6 +132,14 @@ const Timer = () => {
   };
   const handleEndClick = () => {
     setTimerRunning(false);
+
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        updateFireStore(workTime, uid);
+      }
+    });
   };
 
   const handleDifficulty = (event) => {
@@ -252,6 +323,11 @@ const Timer = () => {
           </Grid>
         </Grid>
       </Box>
+
+      <Button variant="contained" onClick={() => handleTotal()}>
+        Total Time!
+      </Button>
+      {showTotal && <p>{total}</p>}
     </div>
   );
 };
