@@ -26,7 +26,7 @@ import {
   FormControl,
   Snackbar,
   Switch,
-  FormControlLabel,
+  FormControlLabel
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -35,6 +35,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { db } from "../models/firebase";
 import { auth } from "../models/firebase";
+import styled from "styled-components";
 import {
   collection,
   query,
@@ -89,7 +90,6 @@ function TaskList() {
         setTaskListID(doc.id);
       });
     };
-
     const fetchTasks = async () => {
       if (taskList.data().tasks.length === 0) {
         setTasks([]);
@@ -446,31 +446,35 @@ function TaskList() {
                       flexDirection: "column",
                     }}
                   >
-                    <Typography>
-                      {task.data().content &&
-                        "Description: " + task.data().content}
-                    </Typography>
-                    <Box sx={{ mb: 1, ml: -18, my: ".5rem" }}>Shared with</Box>
-                    <Box
-                      sx={{ display: "flex", alignItems: "center", ml: -21.75 }}
-                    >
-                      {task.data().sharedWith.length > 0
-                        ? task
-                            .data()
-                            .sharedWith.map((user, index) => (
-                              <Avatar
-                                key={index}
-                                sx={{ ml: 1 }}
-                                alt={user}
-                                src={`https://i.pravatar.cc/32?u=${user}`}
-                              />
-                            ))
-                        : "No one"}
-                    </Box>
+                    <Typography variant="body1">
+  {task.data().content && (
+    <>
+      <Box sx={{ mb: 1 }}>Description:</Box>
+      <Box sx={{ mb: 1, ml: 0 }}>{task.data().content}</Box>
+    </>
+  )}
+  <Box sx={{ mb: 1, mt: 2 }}>Shared with:</Box>
+  <Box sx={{ display: "flex", alignItems: "center", ml: -1 }}>
+    {task.data().sharedWith.length > 0 ? (
+      task.data().sharedWith.map((user, index) => (
+        <Avatar
+          key={index}
+          sx={{ ml: 1 }}
+          alt={user}
+          src={`https://i.pravatar.cc/32?u=${user}`}
+        />
+      ))
+    ) : (
+      <Typography sx={{ml: 1}}>No one</Typography>
+    )}
+  </Box>
+</Typography>
+
 
                     <Typography
                       sx={{
-                        ml: "-1.5rem",
+                        ml: "0rem",
+                        mt: "1rem"
                       }}
                     >
                       Created on: {task.data().date.toDate().toDateString()}
