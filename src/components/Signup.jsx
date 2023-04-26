@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { auth, googleProvider } from "../models/firebase";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { collection, addDoc, Timestamp, setDoc, doc } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -65,6 +65,14 @@ export const Signup = () => {
           displayName: displayName,
         })
           .then(() => {
+            const TimerRef = setDoc(
+              doc(db, "Timer", "" + auth.currentUser.uid),
+              {
+                BreakTime: 0,
+                UserID: auth.currentUser.uid,
+                Worktime: 0,
+              }
+            );
             const taskRef = addDoc(collection(db, "tasks"), sampleTask)
               .then((taskID) => {
                 console.log("Sample task written with ID: ", taskID.id);
