@@ -17,6 +17,7 @@ import {
   DialogActions,
   Dialog,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { Email, Facebook, Twitter, Instagram } from "@mui/icons-material";
@@ -44,6 +45,33 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+const StyledTableCell = styled(TableCell)`
+  font-weight: bold;
+  text-transform: uppercase;
+`;
+const StyledTableActionsCell = styled(TableCell)`
+  display: flex;
+  justify-content: space-between;
+`;
+const StyledTableButton = styled(Button)`
+  margin-right: 10px;
+`;
+const TableWrapper = styled(TableContainer)`
+  max-height: 500px;
+  overflow-y: scroll;
+`;
+const ClearFilterButton = styled(Button)`
+  margin-right: 16px;
+`;
+const ShareButton = styled(Button)`
+  background-color: #1976d2;
+  color: #fff;
+
+  &:hover {
+    background-color: #1565c0;
+  }
+`;
+
 export const TaskDetails = () => {
   // Setting up state for tasks, filter type and value, filtered tasks, edited task and share modal
   const [tasks, setTasks] = useState([]);
@@ -55,12 +83,14 @@ export const TaskDetails = () => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [taskID, setTaskID] = useState(useParams());
   const [mainTask, setMainTask] = useState({});
-  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const subtasksRef = collection(db, "tasks", taskID.id, "subTasks");
   const [taskName, setTaskName] = useState("");
   const [taskContent, setTaskContent] = useState("");
-  const [priority, setPriority] = useState("");
+  const [priority, setPriority] = useState(1);
+  const [editing, setEditing] = useState(false);
+  const [active, setActive] = useState(false);
+  const navigate = useNavigate();
+  const subtasksRef = collection(db, "tasks", taskID.id, "subTasks");
 
   const getMainTask = async () => {
     const docRef = doc(db, "tasks", taskID.id);
@@ -126,32 +156,6 @@ export const TaskDetails = () => {
     setFilterValue("");
     setFilteredTasks(null);
   };
-  const StyledTableCell = styled(TableCell)`
-    font-weight: bold;
-    text-transform: uppercase;
-  `;
-  const StyledTableActionsCell = styled(TableCell)`
-    display: flex;
-    justify-content: space-between;
-  `;
-  const StyledTableButton = styled(Button)`
-    margin-right: 10px;
-  `;
-  const TableWrapper = styled(TableContainer)`
-    max-height: 500px;
-    overflow-y: scroll;
-  `;
-  const ClearFilterButton = styled(Button)`
-    margin-right: 16px;
-  `;
-  const ShareButton = styled(Button)`
-    background-color: #1976d2;
-    color: #fff;
-
-    &:hover {
-      background-color: #1565c0;
-    }
-  `;
   const statusColors = {
     "Not completed": "#f44336",
     "In progress": "#ff9800",
@@ -171,9 +175,14 @@ export const TaskDetails = () => {
   };
 
   // Handling task edit button click
-  const handleEditTask = (index, task) => {
-    setEditTaskIndex(index);
-    setEditedTask(task);
+  const handleEditTask = (task) => {
+    setTaskName(task.data().name);
+    setTaskContent(task.data().content);
+    setPriority(task.data().priority);
+    setEditing(true);
+    console.log(task.data());
+    setActive(task);
+    setOpen(true);
   };
 
   // Handling save task button click
@@ -182,12 +191,6 @@ export const TaskDetails = () => {
     newTasks[index] = editedTask;
     setTasks(newTasks);
     setEditTaskIndex(-1);
-  };
-
-  // Handling cancel edit button click
-  const handleCancelEdit = () => {
-    setEditTaskIndex(-1);
-    setEditedTask({});
   };
 
   const deleteTask = (task) => {
@@ -213,28 +216,43 @@ export const TaskDetails = () => {
 
   const handleCancel = () => {
     setOpen(false);
+    setEditing(false);
     setTaskContent("");
     setTaskName("");
     setPriority("1");
   };
 
   function handleSubmit() {
-    addDoc(subtasksRef, {
-      name: taskName || `Task #${tasks.length + 1}`,
-      description: taskContent,
-      priority: priority,
-      dueDate: Timestamp.fromDate(new Date()).toDate(),
-      status: "Not completed",
-    })
-      .then((r) => {
-        update();
-        handleCancel();
-        console.log("r", r);
+    if (editing) {
+      updateDoc(doc(subtasksRef, active.id), {
+        name: taskName,
+        description: taskContent,
+        priority: priority || 1,
       })
-      .catch((e) => {
-        console.error(e);
-      });
-    setOpen(false);
+        .then(() => {
+          update();
+          handleCancel();
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      addDoc(subtasksRef, {
+        name: taskName || `Task #${tasks.length + 1}`,
+        description: taskContent,
+        priority: priority,
+        dueDate: Timestamp.fromDate(new Date()).toDate(),
+        status: "Not completed",
+      })
+        .then((r) => {
+          update();
+          handleCancel();
+          console.log("r", r);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
   }
 
   return (
@@ -315,23 +333,17 @@ export const TaskDetails = () => {
       <Container
         sx={{
           display: "flex",
-          flexGrow: 0,
           justifyContent: "center",
         }}
       >
         <Typography variant="h3" align="center" my="1rem">
           {mainTask.data && mainTask.data().name}
         </Typography>
-        <IconButton
-          sx={{
-            "&:hover": {
-              backgroundColor: "rgba(66, 66, 66, 0.3)",
-              borderRadius: "10px",
-            },
-          }}
-        >
-          <ShareIcon onClick={handleShareClick} />
-        </IconButton>
+        <Tooltip title="Share">
+          <IconButton onClick={handleShareClick}>
+            <ShareIcon />
+          </IconButton>
+        </Tooltip>
       </Container>
       <Container
         sx={{
@@ -462,14 +474,14 @@ export const TaskDetails = () => {
                         >
                           Save
                         </StyledTableButton>
-                        <StyledTableButton onClick={handleCancelEdit}>
+                        <StyledTableButton onClick={() => handleCancel()}>
                           Cancel
                         </StyledTableButton>
                       </>
                     ) : (
                       <>
                         <StyledTableButton
-                          onClick={() => handleEditTask(index, task)}
+                          onClick={() => handleEditTask(task)}
                           startIcon={<EditIcon />}
                         >
                           Edit

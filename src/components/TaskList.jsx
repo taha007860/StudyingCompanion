@@ -36,10 +36,10 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { db } from "../models/firebase";
 import { auth } from "../models/firebase";
-import homeBackground from '../../assets/home.jpeg';
+import homeBackground from "../../assets/home.jpeg";
 import {
   collection,
   query,
@@ -263,7 +263,8 @@ function TaskList() {
             console.error(error);
           });
       } else {
-        const newTask = {
+        console.log("Task list ID: ", taskListID);
+        addDoc(tasksRef, {
           name: taskName || `Task #${tasks.length + 1}`,
           status: "Not completed",
           date: Timestamp.fromDate(new Date()).toDate(),
@@ -271,16 +272,13 @@ function TaskList() {
           content: taskContent,
           public: false,
           sharedWith: [],
-        };
-
-        console.log("Task list ID: ", taskListID);
-        addDoc(tasksRef, newTask)
+        })
           .then((docRef) => {
             updateDoc(doc(db, "TaskList", taskListID), {
               tasks: arrayUnion(docRef.id),
             })
               .then(() => {
-                addDoc(collection(db, "tasks", docRef.id, "subTasks"), {
+                addDoc(collection(db, "tasks", docRef?.id, "subTasks"), {
                   name: "Sample Subtask",
                   description: "This is a sample subtask. You can delete it.",
                   priority: "1",
@@ -320,13 +318,16 @@ function TaskList() {
   };
 
   return (
-    <Container sx={{backgroundImage: `url(${homeBackground})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    width: '100%',
-    height: '100%',
-    }}>
+    <Container
+      sx={{
+        backgroundImage: `url(${homeBackground})`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        width: "100%",
+        height: "100%",
+      }}
+    >
       <Container
         maxWidth="sm"
         sx={{
