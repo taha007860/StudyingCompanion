@@ -319,17 +319,17 @@ function TaskList() {
 
   return (
     
-    <Container sx={{
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      width: "100%",
+    <div className="Background"
+    style={{
       backgroundImage: `url(${homeBackground})`,
-      backgroundRepeat: "no-repeat",
       backgroundSize: "cover",
-      
-    }}
->
+      backgroundPosition: "center",
+      minHeight: "91.4vh",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center"
+          }}
+  >
       <Container
         maxWidth="sm"
         sx={{
@@ -621,7 +621,7 @@ function TaskList() {
           </Alert>
         </Snackbar>
       </Container>
-    </Container>
+    </div>
   );
 }
 
