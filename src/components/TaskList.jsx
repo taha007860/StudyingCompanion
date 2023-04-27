@@ -609,6 +609,7 @@ function TaskList() {
         </Snackbar>
       </Container>
     </Container>
+    </div>
   );
 }
 
