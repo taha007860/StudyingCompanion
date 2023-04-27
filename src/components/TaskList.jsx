@@ -147,6 +147,7 @@ function TaskList() {
   };
   const handleTaskDetails = (task) => {
     if (auth.currentUser?.isAnonymous) {
+      console.log("hi");
     } else {
       if (activeTask) {
         navigate(`/TaskList/${activeTask.id}`);
@@ -173,18 +174,23 @@ function TaskList() {
   };
 
   const handleDelete = () => {
-    deleteDoc(doc(db, "tasks", activeTask.id))
-      .then(() => {
-        updateDoc(doc(db, "TaskList", taskListID), {
-          tasks: arrayRemove(activeTask.id),
-        }).then((r) => {
-          update();
-          console.log(r);
+    if (auth.currentUser?.isAnonymous) {
+      setTasks(tasks.filter((task) => task.id !== activeTask.id));
+      handleClose();
+    } else {
+      deleteDoc(doc(db, "tasks", activeTask.id))
+        .then(() => {
+          updateDoc(doc(db, "TaskList", taskListID), {
+            tasks: arrayRemove(activeTask.id),
+          }).then((r) => {
+            update();
+            console.log(r);
+          });
+        })
+        .catch((error) => {
+          console.error(error);
         });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    }
   };
 
   const handleAddTask = () => {
@@ -200,59 +206,102 @@ function TaskList() {
   };
 
   const handleSubmit = () => {
-    if (editing) {
-      updateDoc(doc(db, "tasks", activeTask.id), {
-        name: taskName,
-        content: taskContent,
-        priority: priority,
-      })
-        .then(() => {
-          update();
-          handleCancel();
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    } else {
-      const newTask = {
-        name: taskName || `Task #${tasks.length + 1}`,
-        status: "Not completed",
-        date: Timestamp.fromDate(new Date()).toDate(),
-        priority: priority,
-        content: taskContent,
-        public: false,
-        sharedWith: [],
-      };
-
-      console.log("Task list ID: ", taskListID);
-      addDoc(tasksRef, newTask)
-        .then((docRef) => {
-          updateDoc(doc(db, "TaskList", taskListID), {
-            tasks: arrayUnion(docRef.id),
-          })
-            .then(() => {
-              addDoc(collection(db, "tasks", docRef.id, "subTasks"), {
-                name: "Sample Subtask",
-                description: "This is a sample subtask. You can delete it.",
-                priority: "1",
-                dueDate: Timestamp.fromDate(new Date()).toDate(),
+    if (auth.currentUser?.isAnonymous) {
+      if (editing) {
+        const newTask = {
+          id: activeTask.id + 1,
+          data: function () {
+            return {
+              name: taskName,
+              status: "Not completed",
+              date: Timestamp.fromDate(new Date()).toDate(),
+              priority: priority,
+              content: taskContent,
+              public: false,
+              sharedWith: activeTask.data().sharedWith,
+            };
+          },
+        };
+        setTasks([
+          ...tasks.filter((task) => task.id !== activeTask.id),
+          newTask,
+        ]);
+        handleCancel();
+      } else {
+        setTasks([
+          ...tasks,
+          {
+            id: tasks.length + 1,
+            data: function () {
+              return {
+                name: taskName || `Task #${tasks.length + 1}`,
                 status: "Not completed",
-              })
-                .then(() => {
-                  update();
-                  handleCancel();
-                })
-                .catch((error) => {
-                  console.error(error);
-                });
-            })
-            .catch((error) => {
-              console.error(error);
-            });
+                date: Timestamp.fromDate(new Date()).toDate(),
+                priority: priority,
+                content: taskContent,
+                public: false,
+                sharedWith: [],
+              };
+            },
+          },
+        ]);
+        handleCancel();
+      }
+    } else {
+      if (editing) {
+        updateDoc(doc(db, "tasks", activeTask.id), {
+          name: taskName,
+          content: taskContent,
+          priority: priority,
         })
-        .catch((error) => {
-          console.error(error);
-        });
+          .then(() => {
+            update();
+            handleCancel();
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } else {
+        const newTask = {
+          name: taskName || `Task #${tasks.length + 1}`,
+          status: "Not completed",
+          date: Timestamp.fromDate(new Date()).toDate(),
+          priority: priority,
+          content: taskContent,
+          public: false,
+          sharedWith: [],
+        };
+
+        console.log("Task list ID: ", taskListID);
+        addDoc(tasksRef, newTask)
+          .then((docRef) => {
+            updateDoc(doc(db, "TaskList", taskListID), {
+              tasks: arrayUnion(docRef.id),
+            })
+              .then(() => {
+                addDoc(collection(db, "tasks", docRef.id, "subTasks"), {
+                  name: "Sample Subtask",
+                  description: "This is a sample subtask. You can delete it.",
+                  priority: "1",
+                  dueDate: Timestamp.fromDate(new Date()).toDate(),
+                  status: "Not completed",
+                })
+                  .then(() => {
+                    update();
+                    handleCancel();
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                  });
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
     }
   };
 
@@ -549,26 +598,15 @@ function TaskList() {
           left: 0,
         }}
       >
-        <Collapse in={alert}>
+        <Snackbar open={alert} onClose={() => setAlert(false)} message="">
           <Alert
+            onClose={() => setAlert(false)}
             severity="warning"
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={() => {
-                  setAlert(false);
-                }}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
+            sx={{ width: "100%" }}
           >
-            <AlertTitle>Warning</AlertTitle>
             Guest account — <strong>progress not saved!</strong>
           </Alert>
-        </Collapse>
+        </Snackbar>
       </Container>
     </Container>
   );
