@@ -2,10 +2,19 @@ import React, { useEffect, useState } from "react";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import "../styles/App.css";
 import "../styles/Timer.css";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+
+import CustomizableDialog from "./Popup.jsx";
+import { updateDoc, doc, getDoc } from "firebase/firestore";
+import { db } from "../models/firebase";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const Timer = () => {
+  const [buttonText, setButtonText] = useState("start");
+  const [total, setTotal] = useState(0);
+  const [showTotal, setShow] = useState(false);
   const [active, setActive] = useState("");
-  const [level, setLevel] = useState("Custom");
+  const [level, setLevel] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [inputTime, setInputTime] = useState("0:00"); //Initialise time to 0:00 to show format for user
   const [timerRunning, setTimerRunning] = useState(false);
@@ -18,6 +27,11 @@ const Timer = () => {
     seconds: 0,
   });
   const [breakString, setBreakString] = useState("");
+  const [workTime, setWorkTime] = useState(0); //for firestore
+  const [breakTimer, setBreakTimer] = useState(0); //For fireStore
+  const theme = createTheme({
+    typography: { fontFamily: ["Space Grotesk", "sans serif"].join(",") },
+  });
 
   useEffect(() => {
     const [inputMinutes, inputSeconds] = inputTime.split(":"); //Split minutes from seconds
@@ -28,15 +42,36 @@ const Timer = () => {
   }, [inputTime]); //Each time inputTime changes Run effect.
 
   useEffect(() => {
+    setLevel("One");
+    setActive("novice");
+  }, []);
+  const updateFireStore = async (Time, userid) => {
+    const document = doc(db, "Timer", userid);
+    const docSnap = await getDoc(document);
+    let usertime = 0;
+
+    if (docSnap.exists()) {
+      const worktime = docSnap.get("Worktime");
+      console.log(worktime);
+      usertime = worktime + Time;
+      console.log(usertime);
+      await updateDoc(document, { Worktime: usertime });
+      await setWorkTime(0);
+    }
+  };
+  useEffect(() => {
     let timer;
 
     if (timerRunning && (timeLeft.minutes > 0 || timeLeft.seconds > 0)) {
+      if (timeLeft.minutes > 60) setTimeLeft({ minutes: 60, seconds: 0 });
+      if (timeLeft.seconds > 60) setTimeLeft({ seconds: 60 });
       timer = setTimeout(() => {
         setTimeLeft({
           minutes:
             timeLeft.seconds > 0 ? timeLeft.minutes : timeLeft.minutes - 1,
           seconds: timeLeft.seconds > 0 ? timeLeft.seconds - 1 : 59,
         });
+        setWorkTime(workTime + 1);
       }, 1000);
     } else if (
       !Customed &&
@@ -45,6 +80,13 @@ const Timer = () => {
       timeLeft.minutes === 0 &&
       timeLeft.seconds === 0
     ) {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          const uid = user.uid;
+          updateFireStore(workTime, uid);
+        }
+      });
       // Timer has ended, reset to break time
       setCountdown(false);
       setInputTime(breakTime);
@@ -57,20 +99,69 @@ const Timer = () => {
       setTimerRunning(false);
       return () => clearTimeout(timer);
     }
-  }, [timeLeft, timerRunning, countdown, breakTime, Customed]);
+  }, [timeLeft, timerRunning, countdown, breakTime, Customed, workTime]);
+  useEffect(() => {
+    const auth = getAuth();
+    if (timeLeft.minutes === 0 && timeLeft.seconds === 0) {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          const uid = user.uid;
+          updateFireStore(workTime, uid);
+        }
+      });
+    }
+  }, [timerRunning, timeLeft]);
 
+  const handleTotal = () => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const uid = user.uid;
+        const document = doc(db, "Timer", uid);
+        const docSnap = await getDoc(document);
+        if (docSnap.exists()) {
+          const worktime = docSnap.get("Worktime");
+          setTotal(worktime);
+          setShow(true);
+          console.log(worktime);
+        }
+      }
+    });
+  };
   const handleInputChange = (event) => {
-    setInputTime(event.target.value);
+    if (timeLeft.minutes > 60 && timeLeft.seconds > 60) setInputTime("60:00");
+    else setInputTime(event.target.value);
   };
 
   const handleStartClick = () => {
+    setButtonText("Pause");
     setTimerRunning(true);
     setCountdown(true);
   };
   const handleEndClick = () => {
+    setButtonText("Start");
     setTimerRunning(false);
-  };
 
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        updateFireStore(workTime, uid);
+      }
+    });
+  };
+  const handleClick = () => {
+    if (inputTime !== "0:00")
+      if (timerRunning) handleEndClick();
+      else handleStartClick();
+  };
+  const handleClear = () => {
+    setDisabled(true);
+    setInputTime("0:00");
+    setCustomed(true);
+    setActive("");
+    setLevel("Custom");
+  };
   const handleDifficulty = (event) => {
     switch (event) {
       case "novice":
@@ -142,115 +233,152 @@ const Timer = () => {
   }, [level]);
 
   return (
-    <div>
-      <Box
-        sx={{
-          backgroundColor: "#e3f2fd",
-          height: "300px",
-          width: "600px",
-          mx: "auto",
-          mt: "50px",
-          borderRadius: 4,
-          boxShadow: 2,
-        }}
-      >
-        <Box display="flex" sx={{ flexDirection: "column" }}>
-          <TextField
-            inputProps={{
-              style: { textAlign: "center" },
-            }}
-            className="TimeInput"
-            disabled={!disabled}
-            placeholder="Enter Time"
-            value={inputTime}
-            onChange={handleInputChange}
-            sx={{ width: "130px", mx: "auto", bgcolor: "#FFFFFF", mt: "10px" }}
-            size={"small"}
-          />
-          <Grid mt="30px" display="flex" mb="20px" mx="auto">
-            <Typography sx={{ fontSize: "40px" }}>
-              {timeLeft.minutes}:
-              {timeLeft.seconds < 10
-                ? `0${timeLeft.seconds}`
-                : timeLeft.seconds}
-            </Typography>
+    <div
+      style={{
+        backgroundImage: "url('../assets/Nature.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        minHeight: "91.4vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+      }}
+    >
+      <Box sx={{ minHeight: "40vh" }}>
+        <Box sx={{ width: "300px", mx: "auto" }}>
+          <Grid
+            container
+            display="flex"
+            mb="10px"
+            columnSpacing={12}
+            sx={{ mr: "20px" }}
+          >
+            <Grid item xs={3}>
+              <Button
+                size="medium"
+                variant="outlined"
+                onClick={() => handleDifficulty("novice")}
+                disabled={timerRunning}
+                style={{
+                  backgroundColor: active === "novice" ? "#7AB8BF" : "#EFF7FF",
+                }}
+                sx={{
+                  ml: "10px",
+                  borderRadius: "50px",
+                  borderColor: "White",
+                  color: "Black",
+                  boxShadow:
+                    "0px 1px 1px rgba(0, 0, 0, 0.2),0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12)",
+                }}
+              >
+                &nbsp;&nbsp;Easy&nbsp;&nbsp;
+              </Button>
+            </Grid>
+            <Grid item xs={3}>
+              <Button
+                size="medium"
+                variant="outlined"
+                onClick={() => handleDifficulty("apprentice")}
+                style={{
+                  backgroundColor:
+                    active === "apprentice" ? "#7AB8BF" : "#EFF7FF",
+                }}
+                sx={{
+                  borderRadius: "50px",
+                  borderColor: "White",
+                  color: "Black",
+                  boxShadow:
+                    "0px 1px 1px rgba(0, 0, 0, 0.2),0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12)",
+                }}
+                disabled={timerRunning}
+              >
+                Medium
+              </Button>
+            </Grid>
+            <Grid item xs={3}>
+              <Button
+                size="medium"
+                variant="outlined"
+                onClick={() => handleDifficulty("expert")}
+                style={{
+                  backgroundColor: active === "expert" ? "#7AB8BF" : "#EFF7FF",
+                }}
+                sx={{
+                  borderRadius: "50px",
+                  borderColor: "White",
+                  color: "Black",
+                  boxShadow:
+                    "0px 1px 1px rgba(0, 0, 0, 0.2),0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12)",
+                }}
+                disabled={timerRunning}
+              >
+                expert
+              </Button>
+            </Grid>
           </Grid>
+        </Box>
+        <Box sx={{ fontFamily: "Space Grotesk" }}>
+          <Box display="flex" sx={{ flexDirection: "column" }}>
+            <Grid display="flex" mx="auto">
+              <Typography sx={{ fontSize: "80px", color: "White" }}>
+                {timeLeft.minutes}:
+                {timeLeft.seconds < 10
+                  ? `0${timeLeft.seconds}`
+                  : timeLeft.seconds}
+              </Typography>
+            </Grid>
 
-          {breaks && (
-            <Typography sx={{ width: "400px", mx: "auto" }}>
-              {breakString}
-            </Typography>
-          )}
-          <Box display="flex" sx={{ justifyContent: "center" }}>
-            <Button
-              variant="contained"
-              size="150px"
-              color="success"
-              onClick={handleStartClick}
-              disabled={timerRunning}
-              sx={{ mr: "10px" }}
-            >
-              Start
-            </Button>
-
-            <Button
-              variant="contained"
-              sx={{
-                width: "75px",
-              }}
-              color="error"
-              onClick={handleEndClick}
-              disabled={!timerRunning}
-            >
-              End
-            </Button>
+            {breaks && (
+              <Typography sx={{ width: "400px", mx: "auto" }}>
+                {breakString}
+              </Typography>
+            )}
+            <Box display="flex" sx={{ justifyContent: "center" }}>
+              <Button
+                variant="contained"
+                size="150px"
+                onClick={handleClick}
+                sx={{
+                  backgroundColor: "#EFF7FF",
+                  mr: "10px",
+                  borderRadius: "50px",
+                  borderColor: "White",
+                  color: "Black",
+                  boxShadow:
+                    "0px 1px 1px rgba(0, 0, 0, 0.2),0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12)",
+                }}
+              >
+                {buttonText}
+              </Button>
+              <CustomizableDialog
+                content={
+                  <Box>
+                    <TextField
+                      inputProps={{
+                        style: { textAlign: "center" },
+                        maxlength: "5",
+                      }}
+                      className="TimeInput"
+                      disabled={!disabled}
+                      placeholder="Enter Time"
+                      value={inputTime}
+                      onChange={handleInputChange}
+                      sx={{
+                        width: "130px",
+                        mx: "auto",
+                        bgcolor: "#FFFFFF",
+                      }}
+                      size={"small"}
+                    ></TextField>
+                    <Button sx={{ width: "30px" }} onClick={handleClear}>
+                      Clear
+                    </Button>
+                  </Box>
+                }
+              />
+            </Box>
           </Box>
         </Box>
-      </Box>
-      <Box
-        sx={{
-          backgroundColor: "#e3f2fd",
-          borderRadius: 4,
-          boxShadow: 2,
-          height: "100px",
-          width: "600px",
-          mx: "auto",
-          mt: "50px",
-        }}
-      >
-        <Grid container mt="50px" display="flex" mb="50px" columnSpacing={25}>
-          <Grid item xs={4}>
-            <Button
-              onClick={() => handleDifficulty("novice")}
-              disabled={timerRunning}
-              style={{
-                backgroundColor: active === "novice" ? "#7AB8BF" : "white",
-              }}
-              sx={{ ml: "10px" }}
-            ></Button>
-            <Typography>&nbsp;&nbsp;&nbsp;Novice</Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <Button
-              onClick={() => handleDifficulty("apprentice")}
-              style={{
-                backgroundColor: active === "apprentice" ? "#7AB8BF" : "white",
-              }}
-              disabled={timerRunning}
-            ></Button>
-            <Typography>Apprentice</Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <Button
-              onClick={() => handleDifficulty("expert")}
-              style={{
-                backgroundColor: active === "expert" ? "#7AB8BF" : "white",
-              }}
-              disabled={timerRunning}
-            ></Button>
-            <Typography>&nbsp;&nbsp;Expert</Typography>
-          </Grid>
-        </Grid>
       </Box>
     </div>
   );
