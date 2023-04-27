@@ -90,7 +90,7 @@ const Auth = () => {
           backgroundImage: `url(${welcomeImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          width: "80%",
+          width: "57%",
           height: "50vh",
         }}
       ></Container>
