@@ -1,24 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Grid,
-  TextField,
-  Typography,
-  Popover,
-} from "@mui/material";
+import { Box, Button, Grid, TextField, Typography } from "@mui/material";
+import "../styles/App.css";
+import "../styles/Timer.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import TuneIcon from "@mui/icons-material/Tune";
+
 import CustomizableDialog from "./Popup.jsx";
-import {
-  updateDoc,
-  getDocs,
-  collection,
-  query,
-  where,
-  doc,
-  getDoc,
-} from "firebase/firestore";
+import { updateDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../models/firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
@@ -40,9 +27,11 @@ const Timer = () => {
     seconds: 0,
   });
   const [breakString, setBreakString] = useState("");
-
   const [workTime, setWorkTime] = useState(0); //for firestore
   const [breakTimer, setBreakTimer] = useState(0); //For fireStore
+  const theme = createTheme({
+    typography: { fontFamily: ["Space Grotesk", "sans serif"].join(",") },
+  });
 
   useEffect(() => {
     const [inputMinutes, inputSeconds] = inputTime.split(":"); //Split minutes from seconds
