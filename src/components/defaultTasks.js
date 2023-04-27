@@ -1,32 +1,48 @@
+import { Timestamp } from "firebase/firestore";
+
 const tasks = [
-    {
-      name: "Task 1",
-      progress: 50,
-      priority: "High",
-      status: "Not completed",
-      dueDate: "4/6/2023",
-      description: "Lorem ipstum",
-      sharedWith: ["User 1 ", "User 2"],
+  {
+    id: 1,
+    data: function () {
+      return {
+        name: "Task 1",
+        priority: "High",
+        status: "Not completed",
+        date: Timestamp.fromDate(new Date()).toDate(),
+        content: "Lorem ipstum",
+        sharedWith: ["User 1 ", "User 2"],
+        public: false,
+      };
     },
-    {
-      name: "Task 2",
-      progress: 25,
-      priority: "Low",
-      status: "Not completed",
-      dueDate: "4/6/2023",
-      description: "Lorem ipstum",
-      sharedWith: ["User 3 ", "User 4"],
+  },
+  {
+    id: 2,
+    data: function () {
+      return {
+        name: "Task 2",
+        priority: "Low",
+        status: "Not completed",
+        date: Timestamp.fromDate(new Date()).toDate(),
+        content: "Lorem ipstum",
+        sharedWith: ["User 3 ", "User 4"],
+        public: false,
+      };
     },
-    {
-      name: "Task 3",
-      progress: 75,
-      status: "Not completed",
-      priority: "Medium",
-      dueDate: "4/6/2023",
-      description: "Lorem ipstum",
-      sharedWith: ["User 1 ", "User 4"],
+  },
+  {
+    id: 3,
+    data: function () {
+      return {
+        name: "Task 3",
+        status: "Not completed",
+        priority: "Medium",
+        date: Timestamp.fromDate(new Date()).toDate(),
+        content: "Lorem ipstum",
+        sharedWith: ["User 1 ", "User 4"],
+        public: false,
+      };
     },
-  ];
-  
-  export default tasks;
-  
+  },
+];
+
+export default tasks;

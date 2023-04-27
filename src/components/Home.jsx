@@ -9,6 +9,7 @@ import {
   Button,
   Avatar,
 } from "@mui/material";
+import Footer from "./Footer";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -341,6 +342,7 @@ const Home = () => {
           </Grid>
         </Box>
       </Box>
+      <Footer />
     </div>
   );
 };
