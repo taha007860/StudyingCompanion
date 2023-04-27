@@ -552,9 +552,10 @@ function TaskList() {
                         }}
                       >
                         Created on:{" "}
-                        {auth.currentUser.isAnonymous
-                          ? task.data().date.toDateString()
-                          : task.data().date.toDate().toDateString()}
+                        {auth.currentUser &&
+                          (auth.currentUser?.isAnonymous
+                            ? task?.data().date.toDateString()
+                            : task?.data().date.toDate().toDateString())}
                       </Typography>
                     </Box>
                   }
