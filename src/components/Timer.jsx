@@ -29,7 +29,6 @@ const Timer = () => {
   const [breakString, setBreakString] = useState("");
   const [workTime, setWorkTime] = useState(0); //for firestore
   const [breakTimer, setBreakTimer] = useState(0); //For fireStore
-
   const theme = createTheme({
     typography: { fontFamily: ["Space Grotesk", "sans serif"].join(",") },
   });
@@ -239,152 +238,148 @@ const Timer = () => {
         backgroundImage: "url('../assets/Nature.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        minHeight: "100vh",
+        minHeight: "91.4vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
       }}
     >
-      <ThemeProvider theme={theme}>
-        <Box sx={{ minHeight: "40vh" }}>
-          <Box sx={{ width: "300px", mx: "auto" }}>
-            <Grid
-              container
-              display="flex"
-              mb="10px"
-              columnSpacing={12}
-              sx={{ mr: "20px" }}
-            >
-              <Grid item xs={3}>
-                <Button
-                  size="medium"
-                  variant="outlined"
-                  onClick={() => handleDifficulty("novice")}
-                  disabled={timerRunning}
-                  style={{
-                    backgroundColor:
-                      active === "novice" ? "#7AB8BF" : "#EFF7FF",
-                  }}
-                  sx={{
-                    ml: "10px",
-                    borderRadius: "50px",
-                    borderColor: "White",
-                    color: "Black",
-                    boxShadow:
-                      "0px 1px 1px rgba(0, 0, 0, 0.2),0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12)",
-                  }}
-                >
-                  &nbsp;&nbsp;Easy&nbsp;&nbsp;
-                </Button>
-              </Grid>
-              <Grid item xs={3}>
-                <Button
-                  size="medium"
-                  variant="outlined"
-                  onClick={() => handleDifficulty("apprentice")}
-                  style={{
-                    backgroundColor:
-                      active === "apprentice" ? "#7AB8BF" : "#EFF7FF",
-                  }}
-                  sx={{
-                    borderRadius: "50px",
-                    borderColor: "White",
-                    color: "Black",
-                    boxShadow:
-                      "0px 1px 1px rgba(0, 0, 0, 0.2),0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12)",
-                  }}
-                  disabled={timerRunning}
-                >
-                  Medium
-                </Button>
-              </Grid>
-              <Grid item xs={3}>
-                <Button
-                  size="medium"
-                  variant="outlined"
-                  onClick={() => handleDifficulty("expert")}
-                  style={{
-                    backgroundColor:
-                      active === "expert" ? "#7AB8BF" : "#EFF7FF",
-                  }}
-                  sx={{
-                    borderRadius: "50px",
-                    borderColor: "White",
-                    color: "Black",
-                    boxShadow:
-                      "0px 1px 1px rgba(0, 0, 0, 0.2),0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12)",
-                  }}
-                  disabled={timerRunning}
-                >
-                  expert
-                </Button>
-              </Grid>
+      <Box sx={{ minHeight: "40vh" }}>
+        <Box sx={{ width: "300px", mx: "auto" }}>
+          <Grid
+            container
+            display="flex"
+            mb="10px"
+            columnSpacing={12}
+            sx={{ mr: "20px" }}
+          >
+            <Grid item xs={3}>
+              <Button
+                size="medium"
+                variant="outlined"
+                onClick={() => handleDifficulty("novice")}
+                disabled={timerRunning}
+                style={{
+                  backgroundColor: active === "novice" ? "#7AB8BF" : "#EFF7FF",
+                }}
+                sx={{
+                  ml: "10px",
+                  borderRadius: "50px",
+                  borderColor: "White",
+                  color: "Black",
+                  boxShadow:
+                    "0px 1px 1px rgba(0, 0, 0, 0.2),0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12)",
+                }}
+              >
+                &nbsp;&nbsp;Easy&nbsp;&nbsp;
+              </Button>
             </Grid>
-          </Box>
-          <Box sx={{ fontFamily: "Space Grotesk" }}>
-            <Box display="flex" sx={{ flexDirection: "column" }}>
-              <Grid display="flex" mx="auto">
-                <Typography sx={{ fontSize: "80px", color: "White" }}>
-                  {timeLeft.minutes}:
-                  {timeLeft.seconds < 10
-                    ? `0${timeLeft.seconds}`
-                    : timeLeft.seconds}
-                </Typography>
-              </Grid>
+            <Grid item xs={3}>
+              <Button
+                size="medium"
+                variant="outlined"
+                onClick={() => handleDifficulty("apprentice")}
+                style={{
+                  backgroundColor:
+                    active === "apprentice" ? "#7AB8BF" : "#EFF7FF",
+                }}
+                sx={{
+                  borderRadius: "50px",
+                  borderColor: "White",
+                  color: "Black",
+                  boxShadow:
+                    "0px 1px 1px rgba(0, 0, 0, 0.2),0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12)",
+                }}
+                disabled={timerRunning}
+              >
+                Medium
+              </Button>
+            </Grid>
+            <Grid item xs={3}>
+              <Button
+                size="medium"
+                variant="outlined"
+                onClick={() => handleDifficulty("expert")}
+                style={{
+                  backgroundColor: active === "expert" ? "#7AB8BF" : "#EFF7FF",
+                }}
+                sx={{
+                  borderRadius: "50px",
+                  borderColor: "White",
+                  color: "Black",
+                  boxShadow:
+                    "0px 1px 1px rgba(0, 0, 0, 0.2),0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12)",
+                }}
+                disabled={timerRunning}
+              >
+                expert
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+        <Box sx={{ fontFamily: "Space Grotesk" }}>
+          <Box display="flex" sx={{ flexDirection: "column" }}>
+            <Grid display="flex" mx="auto">
+              <Typography sx={{ fontSize: "80px", color: "White" }}>
+                {timeLeft.minutes}:
+                {timeLeft.seconds < 10
+                  ? `0${timeLeft.seconds}`
+                  : timeLeft.seconds}
+              </Typography>
+            </Grid>
 
-              {breaks && (
-                <Typography sx={{ width: "400px", mx: "auto" }}>
-                  {breakString}
-                </Typography>
-              )}
-              <Box display="flex" sx={{ justifyContent: "center" }}>
-                <Button
-                  variant="contained"
-                  size="150px"
-                  onClick={handleClick}
-                  sx={{
-                    backgroundColor: "#EFF7FF",
-                    mr: "10px",
-                    borderRadius: "50px",
-                    borderColor: "White",
-                    color: "Black",
-                    boxShadow:
-                      "0px 1px 1px rgba(0, 0, 0, 0.2),0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12)",
-                  }}
-                >
-                  {buttonText}
-                </Button>
-                <CustomizableDialog
-                  content={
-                    <Box>
-                      <TextField
-                        inputProps={{
-                          style: { textAlign: "center" },
-                          maxlength: "5",
-                        }}
-                        className="TimeInput"
-                        disabled={!disabled}
-                        placeholder="Enter Time"
-                        value={inputTime}
-                        onChange={handleInputChange}
-                        sx={{
-                          width: "130px",
-                          mx: "auto",
-                          bgcolor: "#FFFFFF",
-                        }}
-                        size={"small"}
-                      ></TextField>
-                      <Button sx={{ width: "30px" }} onClick={handleClear}>
-                        Clear
-                      </Button>
-                    </Box>
-                  }
-                />
-              </Box>
+            {breaks && (
+              <Typography sx={{ width: "400px", mx: "auto" }}>
+                {breakString}
+              </Typography>
+            )}
+            <Box display="flex" sx={{ justifyContent: "center" }}>
+              <Button
+                variant="contained"
+                size="150px"
+                onClick={handleClick}
+                sx={{
+                  backgroundColor: "#EFF7FF",
+                  mr: "10px",
+                  borderRadius: "50px",
+                  borderColor: "White",
+                  color: "Black",
+                  boxShadow:
+                    "0px 1px 1px rgba(0, 0, 0, 0.2),0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12)",
+                }}
+              >
+                {buttonText}
+              </Button>
+              <CustomizableDialog
+                content={
+                  <Box>
+                    <TextField
+                      inputProps={{
+                        style: { textAlign: "center" },
+                        maxlength: "5",
+                      }}
+                      className="TimeInput"
+                      disabled={!disabled}
+                      placeholder="Enter Time"
+                      value={inputTime}
+                      onChange={handleInputChange}
+                      sx={{
+                        width: "130px",
+                        mx: "auto",
+                        bgcolor: "#FFFFFF",
+                      }}
+                      size={"small"}
+                    ></TextField>
+                    <Button sx={{ width: "30px" }} onClick={handleClear}>
+                      Clear
+                    </Button>
+                  </Box>
+                }
+              />
             </Box>
           </Box>
         </Box>
-      </ThemeProvider>
+      </Box>
     </div>
   );
 };

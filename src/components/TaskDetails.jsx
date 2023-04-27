@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Modal,
@@ -12,10 +12,14 @@ import {
   Typography,
   Container,
   Skeleton,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Dialog,
 } from "@mui/material";
-import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { Email, Facebook, Twitter, Instagram } from "@mui/icons-material";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   collection,
   documentId,
@@ -24,6 +28,11 @@ import {
   where,
   getDoc,
   doc,
+  deleteDoc,
+  updateDoc,
+  arrayRemove,
+  addDoc,
+  Timestamp,
 } from "firebase/firestore";
 import { db } from "../models/firebase";
 import styled from "styled-components";
@@ -39,8 +48,12 @@ export const TaskDetails = () => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [taskID, setTaskID] = useState(useParams());
   const [mainTask, setMainTask] = useState({});
-
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   const subtasksRef = collection(db, "tasks", taskID.id, "subTasks");
+  const [taskName, setTaskName] = useState("");
+  const [taskContent, setTaskContent] = useState("");
+  const [priority, setPriority] = useState("");
 
   const getMainTask = async () => {
     const docRef = doc(db, "tasks", taskID.id);
@@ -107,35 +120,35 @@ export const TaskDetails = () => {
     setFilteredTasks(null);
   };
   const StyledTableCell = styled(TableCell)`
-  font-weight: bold;
-  text-transform: uppercase;
-`;
-const StyledTableActionsCell = styled(TableCell)`
-  display: flex;
-  justify-content: space-between;
-`;
-const StyledTableButton = styled(Button)`
-  margin-right: 10px;
-`;
-const TableWrapper = styled(TableContainer)`
-  max-height: 500px;
-  overflow-y: scroll;
-`;
-const ClearFilterButton = styled(Button)`
-  margin-right: 16px;
-`;
-const ShareButton = styled(Button)`
-  background-color: #1976d2;
-  color: #fff;
-  &:hover {
-    background-color: #1565c0;
-  }
-`;
- const statusColors = {
-  "Not completed": "#f44336",
-  "In progress": "#ff9800",
-  "Completed": "#4caf50"
-};
+    font-weight: bold;
+    text-transform: uppercase;
+  `;
+  const StyledTableActionsCell = styled(TableCell)`
+    display: flex;
+    justify-content: space-between;
+  `;
+  const StyledTableButton = styled(Button)`
+    margin-right: 10px;
+  `;
+  const TableWrapper = styled(TableContainer)`
+    max-height: 500px;
+    overflow-y: scroll;
+  `;
+  const ClearFilterButton = styled(Button)`
+    margin-right: 16px;
+  `;
+  const ShareButton = styled(Button)`
+    background-color: #1976d2;
+    color: #fff;
+    &:hover {
+      background-color: #1565c0;
+    }
+  `;
+  const statusColors = {
+    "Not completed": "#f44336",
+    "In progress": "#ff9800",
+    Completed: "#4caf50",
+  };
 
   // Handling filter value change
   const handleFilterValueChange = (event) => {
@@ -168,10 +181,16 @@ const ShareButton = styled(Button)`
     setEditTaskIndex(-1);
     setEditedTask({});
   };
-  const deleteTask = (index) => {
-    const newTasks = [...tasks];
-    newTasks.splice(index, 1);
-    setTasks(newTasks);
+
+  const deleteTask = (task) => {
+    deleteDoc(doc(db, "tasks", taskID.id, "subTasks", task.id))
+      .then((r) => {
+        update();
+        console.log(r);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
   const handleShareClick = () => {
     setIsShareModalOpen(true);
@@ -183,31 +202,146 @@ const ShareButton = styled(Button)`
     ({ target: { value } }) => {
       setEditedTask({ ...editedTask, [key]: value });
     };
+
+  const handleCancel = () => {
+    setOpen(false);
+    setTaskContent("");
+    setTaskName("");
+    setPriority("1");
+  };
+
+  function handleSubmit() {
+    addDoc(subtasksRef, {
+      name: taskName || `Task #${tasks.length + 1}`,
+      description: taskContent,
+      priority: priority,
+      dueDate: Timestamp.fromDate(new Date()).toDate(),
+      status: "Not completed",
+    })
+      .then((r) => {
+        update();
+        handleCancel();
+        console.log("r", r);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+    setOpen(false);
+  }
+
   return (
     <Container>
-      <Typography variant="h3" align="center" my="2rem">
+      <Dialog open={open} fullWidth={true}>
+        <DialogTitle>Please fill out these details.</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Task Name"
+            defaultValue={taskName}
+            type="taskName"
+            fullWidth
+            variant="standard"
+            onChange={(e) => {
+              setTaskName(e.target.value);
+            }}
+            required={true}
+          />
+          <TextField
+            id="outlined-multiline-static"
+            label="Content"
+            multiline
+            rows={4}
+            defaultValue={taskContent}
+            fullWidth={true}
+            required={true}
+            onChange={(e) => {
+              setTaskContent(e.target.value);
+            }}
+            sx={{
+              my: "1rem",
+            }}
+          />
+          <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+            <InputLabel id="demo-simple-select-standard-label">
+              Priority
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-standard-label"
+              id="demo-simple-select-standard"
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              label="Age"
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              <MenuItem value={1}>Low</MenuItem>
+              <MenuItem value={2}>Medium</MenuItem>
+              <MenuItem value={3}>High</MenuItem>
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleSubmit}>Submit</Button>
+        </DialogActions>
+      </Dialog>
+      <Container
+        sx={{
+          mt: ".5rem",
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
+      >
+        <Button variant="contained" my="2rem" onClick={() => navigate(-1)}>
+          Back
+        </Button>
+      </Container>
+      <Typography variant="h3" align="center" my="1rem">
         {mainTask.data && mainTask.data().name}
       </Typography>
-      <Container>
+      <Container
+        sx={{
+          display: "flex",
+          flexDirection: "vertical",
+          justifyContent: "space-between",
+        }}
+      >
         <FormControl variant="outlined" sx={{ minWidth: 120 }}>
-  <InputLabel id="filter-type-label">Filter Type</InputLabel>
-  <Select
-    labelId="filter-type-label"
-    id="filter-type"
-    value={filterType}
-    onChange={handleFilterTypeChange}
-    label="Filter Type"
-    sx={{ minWidth: 120 }}
-  >
-    <MenuItem value="status">Status</MenuItem>
-    <MenuItem value="priority">Priority</MenuItem>
-    <MenuItem value="name">Name</MenuItem>
-    <MenuItem value="description">Description</MenuItem>
-  </Select>
-</FormControl>
+          <InputLabel id="filter-type-label">Filter Type</InputLabel>
+          <Select
+            labelId="filter-type-label"
+            id="filter-type"
+            value={filterType}
+            onChange={handleFilterTypeChange}
+            label="Filter Type"
+            sx={{ minWidth: 120 }}
+          >
+            <MenuItem value="status">Status</MenuItem>
+            <MenuItem value="priority">Priority</MenuItem>
+            <MenuItem value="name">Name</MenuItem>
+            <MenuItem value="description">Description</MenuItem>
+          </Select>
+        </FormControl>
         <TextField value={filterValue} onChange={handleFilterValueChange} />
-        <ClearFilterButton onClick={handleClearFilter}>Clear Filter</ClearFilterButton>
-<ShareButton variant="contained" onClick={handleShareClick}>Share</ShareButton>
+        <Container
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <ClearFilterButton onClick={handleClearFilter}>
+            Clear Filter
+          </ClearFilterButton>
+          <ShareButton variant="contained" onClick={handleShareClick}>
+            Share
+          </ShareButton>
+          <Button variant="contained" onClick={() => setOpen(true)}>
+            Add Task
+          </Button>
+        </Container>
       </Container>
       <TableWrapper>
         <Table>
@@ -218,7 +352,9 @@ const ShareButton = styled(Button)`
               <StyledTableCell>Due Date</StyledTableCell>
               <StyledTableCell>Priority</StyledTableCell>
               <StyledTableCell>Status</StyledTableCell>
-              <StyledTableCell style={{ paddingLeft: "60px" }}>Actions</StyledTableCell>
+              <StyledTableCell style={{ paddingLeft: "60px" }}>
+                Actions
+              </StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -275,31 +411,35 @@ const ShareButton = styled(Button)`
                       task.data().status
                     )}
                   </TableCell>
-                 <StyledTableActionsCell>
-                  {editTaskIndex === index ? (
-                    <>
-                      <StyledTableButton onClick={() => handleSaveTask(index)}>
-                        Save
-                      </StyledTableButton>
-                      <StyledTableButton onClick={handleCancelEdit}>
-                        Cancel
-                      </StyledTableButton>
-                    </>
-                  ) : (
-                    <>
-                      <StyledTableButton onClick={() => handleEditTask(index, task)}>
-                        Edit
-                      </StyledTableButton>
-                      <StyledTableButton onClick={() => deleteTask(index)}>
-                        Delete
-                      </StyledTableButton>
-                    </>
-                  )}
-                </StyledTableActionsCell>
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
+                  <StyledTableActionsCell>
+                    {editTaskIndex === index ? (
+                      <>
+                        <StyledTableButton
+                          onClick={() => handleSaveTask(index)}
+                        >
+                          Save
+                        </StyledTableButton>
+                        <StyledTableButton onClick={handleCancelEdit}>
+                          Cancel
+                        </StyledTableButton>
+                      </>
+                    ) : (
+                      <>
+                        <StyledTableButton
+                          onClick={() => handleEditTask(index, task)}
+                        >
+                          Edit
+                        </StyledTableButton>
+                        <StyledTableButton onClick={() => deleteTask(task)}>
+                          Delete
+                        </StyledTableButton>
+                      </>
+                    )}
+                  </StyledTableActionsCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
       </TableWrapper>
       {/*<Modal open={isShareModalOpen} onClose={() => setIsShareModalOpen(false)}>*/}
       {/*  <div>*/}

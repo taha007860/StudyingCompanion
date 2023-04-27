@@ -93,6 +93,7 @@ const Header = () => {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
+                    flexDirection: "column",
                   }}
                   onClick={() => navigate("/Account")}
                 >
@@ -102,6 +103,7 @@ const Header = () => {
                   >
                     {auth.currentUser?.displayName?.charAt(0)}
                   </Avatar>
+                  <Typography>{auth.currentUser?.displayName}</Typography>
                 </IconButton>
               </Tooltip>
               <Tooltip title="Logout">
