@@ -27,7 +27,7 @@ import { db } from "../models/firebase";
 export const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("User");
+  const [displayName, setDisplayName] = useState(null);
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState(null);
@@ -57,12 +57,9 @@ export const Signup = () => {
 
     await createUserWithEmailAndPassword(auth, email, password)
       .then(() => {
-        if (displayName === "User") {
-          const s = email.substring(0, email.lastIndexOf("@"));
-          setDisplayName(s);
-        }
         updateProfile(auth.currentUser, {
-          displayName: displayName,
+          displayName:
+            displayName || email.substring(0, email.indexOf("@")) || "User123",
         })
           .then(() => {
             const TimerRef = setDoc(

@@ -174,7 +174,7 @@ const Home = () => {
               Joe
             </Typography>
             <Typography variant="subtitle1" sx={{ fontStyle: "italic" }}>
-              Backend Developer
+              Frontend Developer
             </Typography>
             <Button
               variant="outlined"
@@ -196,7 +196,7 @@ const Home = () => {
               Adam
             </Typography>
             <Typography variant="subtitle1" sx={{ fontStyle: "italic" }}>
-              Frontend Developer
+              Backend Developer
             </Typography>
             <Button
               variant="outlined"
@@ -240,74 +240,85 @@ const Home = () => {
         }}
       >
         <Typography variant="h4" sx={{ fontWeight: "bold", color: "#000" }}>
-        Frequently Asked Questions
-      </Typography>
+          Frequently Asked Questions
+        </Typography>
 
-      <Accordion sx={{ mt: 3 }}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h5">What is StudyingCompanion?</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography variant="body1">
-            StudyingCompanion is a web application designed to help students organize their study resources, collaborate with peers, and stay on top of their coursework.
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
+        <Accordion sx={{ mt: 3 }}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h5">What is StudyingCompanion?</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography variant="body1">
+              StudyingCompanion is a web application designed to help students
+              organize their study resources, collaborate with peers, and stay
+              on top of their coursework.
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
 
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h5">How do I sign up?</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography variant="body1">
-            To sign up for StudyingCompanion, click on the "Get Started" button and follow the instructions to create an account.
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h5">How do I sign up?</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography variant="body1">
+              To sign up for StudyingCompanion, click on the "Get Started"
+              button and follow the instructions to create an account.
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
 
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h5">What if I forget my password?</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography variant="body1">
-            If you forget your password, click on the "Forgot Password" button on the login page and follow the instructions to reset your password.
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h5">What if I forget my password?</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography variant="body1">
+              If you forget your password, click on the "Forgot Password" button
+              on the login page and follow the instructions to reset your
+              password.
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
 
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h5">Can I collaborate with my classmates?</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography variant="body1">
-            Yes! StudyingCompanion allows you to create study groups with your classmates, share resources, and communicate through chat.
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h5">
+              Can I collaborate with my classmates?
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography variant="body1">
+              Yes! StudyingCompanion allows you to create study groups with your
+              classmates, share resources, and communicate through chat.
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
 
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h5">Is StudyingCompanion free?</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography variant="body1">
-            Yes! StudyingCompanion is completely free to use.
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h5">Is StudyingCompanion free?</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography variant="body1">
+              Yes! StudyingCompanion is completely free to use.
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
 
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h5">Can I access StudyingCompanion on my mobile device?</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography variant="body1">
-            Yes! StudyingCompanion is designed to be responsive and can be accessed on any device with an internet connection.
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h5">
+              Can I access StudyingCompanion on my mobile device?
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography variant="body1">
+              Yes! StudyingCompanion is designed to be responsive and can be
+              accessed on any device with an internet connection.
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
       </Box>
     </div>
   );
