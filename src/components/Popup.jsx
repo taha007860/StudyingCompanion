@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@mui/material";
 import TuneIcon from "@mui/icons-material/Tune";
 
+// eslint-disable-next-line react/prop-types
 const CustomizableDialog = ({ content }) => {
   const [open, setOpen] = useState(false);
 
@@ -32,6 +33,7 @@ const CustomizableDialog = ({ content }) => {
       <TuneIcon
         sx={{ mt: "3px", width: "30px", height: "30px" }}
         onClick={handleClickOpen}
+        style={{ cursor: "pointer" }}
       />
       <Dialog open={open} onClose={handleClose}>
         <DialogContent>Customize Timer.</DialogContent>
