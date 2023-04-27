@@ -36,7 +36,6 @@ const CustomizableDialog = ({ content }) => {
         style={{ cursor: "pointer" }}
       />
       <Dialog open={open} onClose={handleClose}>
-        <DialogContent>Customize Timer.</DialogContent>
         <DialogContent>
           {content} <div style={{ fontSize: "10px" }}>Max 60 minutes</div>
         </DialogContent>

@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import "../styles/App.css";
-import "../styles/Timer.css";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles";
 
 import CustomizableDialog from "./Popup.jsx";
 import { updateDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../models/firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
+import ImageIcon from "@mui/icons-material/Image";
+import Image1 from "../../assets/Image1.jpg";
+import Image2 from "../../assets/Image2.jpg";
+import Image3 from "../../assets/Image3.jpg";
+import Image4 from "../../assets/Image4.jpg";
 const Timer = () => {
+  let x = useRef(0);
+  const imageArr = [Image1, Image2, Image3, Image4];
+  const [currentImage, setCurrentImage] = useState(imageArr[0]);
   const [buttonText, setButtonText] = useState("start");
   const [total, setTotal] = useState(0);
   const [showTotal, setShow] = useState(false);
@@ -155,6 +160,12 @@ const Timer = () => {
       if (timerRunning) handleEndClick();
       else handleStartClick();
   };
+  const ChangeImage = async () => {
+    console.log(x);
+    x.current++;
+    if (x.current === 4) x.current = 0;
+    await setCurrentImage(imageArr[x.current]);
+  };
   const handleClear = () => {
     setDisabled(true);
     setInputTime("0:00");
@@ -234,8 +245,9 @@ const Timer = () => {
 
   return (
     <div
+      className="Background"
       style={{
-        backgroundImage: "url('../assets/Nature.jpg')",
+        backgroundImage: `url(${currentImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         minHeight: "91.4vh",
@@ -353,6 +365,16 @@ const Timer = () => {
               <CustomizableDialog
                 content={
                   <Box>
+                    <Box sx={{ flexDirection: "row" }}>
+                      <Typography>
+                        Customize Timer
+                        <ImageIcon
+                          onClick={ChangeImage}
+                          style={{ cursor: "pointer" }}
+                          sx={{ ml: "40px" }}
+                        ></ImageIcon>
+                      </Typography>
+                    </Box>
                     <TextField
                       inputProps={{
                         style: { textAlign: "center" },
