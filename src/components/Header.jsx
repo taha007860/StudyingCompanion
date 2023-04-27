@@ -82,7 +82,7 @@ const Header = () => {
             </Box>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Tooltip title="My Account">
-              <IconButton
+              <IconButton onClick={() => navigate("/Account")}
   sx={{
     display: "flex",
     justifyContent: "center",

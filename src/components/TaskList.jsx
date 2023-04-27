@@ -39,6 +39,7 @@ import { useNavigate } from "react-router-dom";
 import React, { Fragment, useEffect, useState } from "react";
 import { db } from "../models/firebase";
 import { auth } from "../models/firebase";
+import homeBackground from '../../assets/home.jpeg';
 import {
   collection,
   query,
@@ -319,7 +320,13 @@ function TaskList() {
   };
 
   return (
-    <Container>
+    <Container sx={{backgroundImage: `url(${homeBackground})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    width: '100%',
+    height: '100%',
+    }}>
       <Container
         maxWidth="sm"
         sx={{
