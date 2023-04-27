@@ -208,24 +208,24 @@ function TaskList() {
   const handleSubmit = () => {
     if (auth.currentUser?.isAnonymous) {
       if (editing) {
-        const newTask = {
-          id: activeTask.id + 1,
-          data: function () {
-            return {
-              name: taskName,
-              status: "Not completed",
-              date: Timestamp.fromDate(new Date()).toDate(),
-              priority: priority,
-              content: taskContent,
-              public: false,
-              sharedWith: activeTask.data().sharedWith,
+        for (let i = 0; i < tasks.length; i++) {
+          if (tasks[i].id === activeTask.id) {
+            tasks[i] = {
+              id: activeTask.id,
+              data: function () {
+                return {
+                  name: taskName,
+                  status: "Not completed",
+                  date: Timestamp.fromDate(new Date()).toDate(),
+                  priority: priority,
+                  content: taskContent,
+                  public: false,
+                  sharedWith: activeTask.data().sharedWith,
+                };
+              },
             };
-          },
-        };
-        setTasks([
-          ...tasks.filter((task) => task.id !== activeTask.id),
-          newTask,
-        ]);
+          }
+        }
         handleCancel();
       } else {
         setTasks([
