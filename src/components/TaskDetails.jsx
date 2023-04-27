@@ -36,6 +36,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../models/firebase";
 import styled from "styled-components";
+import auth from "./auth";
 
 export const TaskDetails = () => {
   // Setting up state for tasks, filter type and value, filtered tasks, edited task and share modal
@@ -140,6 +141,7 @@ export const TaskDetails = () => {
   const ShareButton = styled(Button)`
     background-color: #1976d2;
     color: #fff;
+
     &:hover {
       background-color: #1565c0;
     }
@@ -330,15 +332,36 @@ export const TaskDetails = () => {
           sx={{
             display: "flex",
             justifyContent: "flex-end",
+            flexGrow: 0,
+            mx: ".2rem",
           }}
         >
-          <ClearFilterButton onClick={handleClearFilter}>
+          <ClearFilterButton
+            onClick={handleClearFilter}
+            sx={{
+              mx: ".2rem",
+              my: "1rem",
+            }}
+          >
             Clear Filter
           </ClearFilterButton>
-          <ShareButton variant="contained" onClick={handleShareClick}>
+          <ShareButton
+            variant="contained"
+            onClick={handleShareClick}
+            sx={{
+              mx: "1rem",
+              my: "1.2rem",
+            }}
+          >
             Share
           </ShareButton>
-          <Button variant="contained" onClick={() => setOpen(true)}>
+          <Button
+            variant="contained"
+            onClick={() => setOpen(true)}
+            sx={{
+              my: "1.2rem",
+            }}
+          >
             Add Task
           </Button>
         </Container>
