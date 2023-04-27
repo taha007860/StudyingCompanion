@@ -316,16 +316,20 @@ function TaskList() {
         console.error(error);
       });
   };
-  document.body.style.background = `url(${homeBackground}) no-repeat center center fixed`;
-document.body.style.backgroundSize = "cover";
 
   return (
-    <Container
-    sx={{
+    
+    <Container sx={{
+      position: 'absolute',
+      left: 0,
+      right: 0,
       width: "100%",
-      height: "100%",
+      backgroundImage: `url(${homeBackground})`,
+      backgroundRepeat: "no-repeat",
+      backgroundSize: "cover",
+      
     }}
-  >
+>
       <Container
         maxWidth="sm"
         sx={{
