@@ -259,7 +259,7 @@ function TaskList() {
   };
 
   return (
-    <div sx={{backgroudImage: `url('../assets/tasklist.jpg)`}}>
+    <div>
     <Container
       maxWidth="sm"
       sx={{
