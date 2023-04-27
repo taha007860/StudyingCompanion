@@ -89,23 +89,23 @@ const Header = () => {
             </Box>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Tooltip title="My Account">
-                <IconButton
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "#fff",
-                    "&:hover": {
-                      backgroundColor: "rgba(66, 66, 66, 0.3)",
-                      borderRadius: "10px",
-                    },
-                  }}
-                >
-                  <Avatar
-                    alt={user.displayName}
-                    src={user.photoURL}
-                    sx={{ width: 28, height: 28, marginRight: 1 }}
-                  />
+              <IconButton onClick={() => navigate("/Account")}
+  sx={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    color: "#fff",
+    "&:hover": {
+      backgroundColor: "rgba(66, 66, 66, 0.3)",
+      borderRadius: "10px",
+    },
+  }}
+>
+  <Avatar
+    alt={user.displayName}
+    src={user.photoURL}
+    sx={{ width: 28, height: 28, marginRight: 1 }}
+  />
                   <Typography
                     variant="body2"
                     sx={{
