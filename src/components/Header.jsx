@@ -44,9 +44,10 @@ const Header = () => {
           sx={{
             display: "flex",
             alignItems: "center",
-            flexGrow: 1
+            flexGrow: 1,
           }}
         >
+          <Link to="/Home" style={{ textDecoration: "none" }}>
             <Typography
               variant="h4"
               sx={{
@@ -58,7 +59,7 @@ const Header = () => {
             >
               Studying Companion
             </Typography>
-          
+          </Link>
         </Box>
         {!(user === null) && (
           <Fragment>
@@ -66,7 +67,10 @@ const Header = () => {
               <Tooltip title="Tasks">
                 <IconButton
                   onClick={() => navigate("/TaskList")}
-                  sx={{ color: "#fff", "&:hover": { backgroundColor: "rgba(66, 66, 66, 0.3)" } }}
+                  sx={{
+                    color: "#fff",
+                    "&:hover": { backgroundColor: "rgba(66, 66, 66, 0.3)" },
+                  }}
                 >
                   <PlaylistAddCheckIcon sx={{ fontSize: 28 }} />
                 </IconButton>
@@ -74,7 +78,10 @@ const Header = () => {
               <Tooltip title="Timer">
                 <IconButton
                   onClick={() => navigate("/Timer")}
-                  sx={{ color: "#fff", "&:hover": { backgroundColor: "rgba(66, 66, 66, 0.3)" } }}
+                  sx={{
+                    color: "#fff",
+                    "&:hover": { backgroundColor: "rgba(66, 66, 66, 0.3)" },
+                  }}
                 >
                   <TimerIcon sx={{ fontSize: 28 }} />
                 </IconButton>
@@ -113,7 +120,13 @@ const Header = () => {
                 </IconButton>
               </Tooltip>
               <Tooltip title="Logout">
-                <IconButton onClick={handleLogout} sx={{ color: "#fff", "&:hover": { backgroundColor: "rgba(66, 66, 66, 0.3)" } }}>
+                <IconButton
+                  onClick={handleLogout}
+                  sx={{
+                    color: "#fff",
+                    "&:hover": { backgroundColor: "rgba(66, 66, 66, 0.3)" },
+                  }}
+                >
                   <LogoutIcon sx={{ fontSize: 28 }} />
                 </IconButton>
               </Tooltip>
