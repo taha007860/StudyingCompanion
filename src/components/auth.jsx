@@ -1,4 +1,3 @@
-import "../styles/App.css";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Container, Typography } from "@mui/material";
 import { auth } from "../models/firebase";
