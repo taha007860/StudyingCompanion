@@ -3,9 +3,11 @@ import { Button, Container, Typography } from "@mui/material";
 import { auth } from "../models/firebase";
 import { signInAnonymously, updateProfile } from "firebase/auth";
 import { useEffect } from "react";
+import welcomeImage from "../../assets/taskwel.jpg";
 
 const Auth = () => {
   const navigate = useNavigate();
+
   const handleGuest = async () => {
     signInAnonymously(auth)
       .then(() => {
@@ -30,16 +32,23 @@ const Auth = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        alignSelf: "center",
         justifyContent: "center",
-        minHeight: "40vh",
-        width: "25rem",
+        minHeight: "100vh",
       }}
     >
-      <Typography align="center" variant="h2" my="1rem">
-        Welcome!
-      </Typography>
-      <Container>
+      <Container
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center",
+          mb: "3rem",
+        }}
+      >
+        <Typography align="center" variant="h2" mb="1rem">
+          Welcome!
+        </Typography>
         <Container
           sx={{
             display: "flex",
@@ -54,7 +63,8 @@ const Auth = () => {
               textDecoration: "none",
             }}
           >
-            <Button variant="contained">Login</Button>
+            <Button variant="contained" 
+            >Login</Button>
           </Link>
           <Link
             to="/auth/Signup"
@@ -65,18 +75,25 @@ const Auth = () => {
             <Button variant="contained">Sign Up</Button>
           </Link>
         </Container>
-        <Container>
-          <Button
-            variant="contained"
-            onClick={handleGuest}
-            sx={{
-              width: "100%",
-            }}
-          >
-            Continue as Guest
-          </Button>
-        </Container>
+        <Button
+          variant="contained"
+          onClick={handleGuest}
+          sx={{
+            width: "100%",
+          }}
+        >
+          Continue as Guest
+        </Button>
       </Container>
+      <Container
+        sx={{
+          backgroundImage: `url(${welcomeImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          width: "80%",
+          height: "50vh",
+        }}
+      ></Container>
     </Container>
   );
 };
