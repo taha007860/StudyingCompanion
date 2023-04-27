@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import {
-  Box,
-  Button,
-  Grid,
-  TextField,
-  Typography,
-  Popover,
+  Popover
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import TuneIcon from "@mui/icons-material/Tune";
@@ -253,8 +248,8 @@ const Timer = () => {
         minHeight: "91.4vh",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
-      }}
+        justifyContent: "center"
+            }}
     >
       <Box sx={{ minHeight: "40vh" }}>
         <Box sx={{ width: "300px", mx: "auto" }}>
