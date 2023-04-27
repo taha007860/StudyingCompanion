@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import "../styles/App.css";
-import "../styles/Timer.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 import CustomizableDialog from "./Popup.jsx";

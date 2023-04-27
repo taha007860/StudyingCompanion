@@ -36,7 +36,6 @@ import React, { useEffect, useState } from "react";
 import { db } from "../models/firebase";
 import { auth } from "../models/firebase";
 import styled from "styled-components";
-import taskimg from "../../assets/tasklist.jpg"
 import {
   collection,
   query,
@@ -260,6 +259,7 @@ function TaskList() {
   };
 
   return (
+    <div sx={{backgroudImage: `url('../assets/tasklist.jpg)`}}>
     <Container
       maxWidth="sm"
       sx={{
@@ -515,6 +515,7 @@ function TaskList() {
         </Menu>
       </List>
     </Container>
+    </div>
   );
 }
 
