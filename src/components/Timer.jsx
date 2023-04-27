@@ -255,11 +255,11 @@ const Timer = () => {
         backgroundImage: `url(${currentImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        minHeight: "91.4vh",
+        minHeight: "95.4vh",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center"
-            }}
+        justifyContent: "center",
+      }}
     >
       <Box sx={{ minHeight: "40vh" }}>
         <Box sx={{ width: "300px", mx: "auto" }}>

@@ -125,9 +125,10 @@ const Home = () => {
             </AccordionSummary>
             <AccordionDetails sx={{ ml: "20px" }}>
               <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                eget.
+                Boost your productivity with shareable to-do lists that
+                seamlessly integrate with priority settings. With these tools,
+                you can easily organize and prioritize your tasks and share them
+                with others to collaborate and stay on track.
               </Typography>
             </AccordionDetails>
           </Accordion>
@@ -157,9 +158,9 @@ const Home = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                eget.
+                Music can be a great way to unwind and relax after a challenging
+                study session. Listening to calming melodies can help reduce
+                stress levels, improve mood, and promote better sleep.
               </Typography>
             </AccordionDetails>
           </Accordion>
