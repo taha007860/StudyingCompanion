@@ -38,7 +38,7 @@ const Header = () => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: "#87CEFF" }}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         <Box
           sx={{
