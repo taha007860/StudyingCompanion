@@ -16,6 +16,7 @@ import {
   DialogContent,
   DialogActions,
   Dialog,
+  IconButton,
 } from "@mui/material";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { Email, Facebook, Twitter, Instagram } from "@mui/icons-material";
@@ -37,6 +38,11 @@ import {
 import { db } from "../models/firebase";
 import styled from "styled-components";
 import auth from "./auth";
+import ShareIcon from "@mui/icons-material/Share";
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export const TaskDetails = () => {
   // Setting up state for tasks, filter type and value, filtered tasks, edited task and share modal
@@ -297,13 +303,36 @@ export const TaskDetails = () => {
           justifyContent: "flex-end",
         }}
       >
-        <Button variant="contained" my="2rem" onClick={() => navigate(-1)}>
+        <Button
+          variant="contained"
+          my="2rem"
+          onClick={() => navigate(-1)}
+          endIcon={<KeyboardBackspaceIcon />}
+        >
           Back
         </Button>
       </Container>
-      <Typography variant="h3" align="center" my="1rem">
-        {mainTask.data && mainTask.data().name}
-      </Typography>
+      <Container
+        sx={{
+          display: "flex",
+          flexGrow: 0,
+          justifyContent: "center",
+        }}
+      >
+        <Typography variant="h3" align="center" my="1rem">
+          {mainTask.data && mainTask.data().name}
+        </Typography>
+        <IconButton
+          sx={{
+            "&:hover": {
+              backgroundColor: "rgba(66, 66, 66, 0.3)",
+              borderRadius: "10px",
+            },
+          }}
+        >
+          <ShareIcon onClick={handleShareClick} />
+        </IconButton>
+      </Container>
       <Container
         sx={{
           display: "flex",
@@ -345,22 +374,13 @@ export const TaskDetails = () => {
           >
             Clear Filter
           </ClearFilterButton>
-          <ShareButton
-            variant="contained"
-            onClick={handleShareClick}
-            sx={{
-              mx: "1rem",
-              my: "1.2rem",
-            }}
-          >
-            Share
-          </ShareButton>
           <Button
             variant="contained"
             onClick={() => setOpen(true)}
             sx={{
               my: "1.2rem",
             }}
+            startIcon={<AddIcon />}
           >
             Add Task
           </Button>
@@ -450,10 +470,14 @@ export const TaskDetails = () => {
                       <>
                         <StyledTableButton
                           onClick={() => handleEditTask(index, task)}
+                          startIcon={<EditIcon />}
                         >
                           Edit
                         </StyledTableButton>
-                        <StyledTableButton onClick={() => deleteTask(task)}>
+                        <StyledTableButton
+                          onClick={() => deleteTask(task)}
+                          startIcon={<DeleteIcon />}
+                        >
                           Delete
                         </StyledTableButton>
                       </>
@@ -464,22 +488,6 @@ export const TaskDetails = () => {
           </TableBody>
         </Table>
       </TableWrapper>
-      {/*<Modal open={isShareModalOpen} onClose={() => setIsShareModalOpen(false)}>*/}
-      {/*  <div>*/}
-      {/*    <Button variant="contained" startIcon={<Email />}>*/}
-      {/*      Gmail*/}
-      {/*    </Button>*/}
-      {/*    <Button variant="contained" startIcon={<Facebook />}>*/}
-      {/*      Facebook*/}
-      {/*    </Button>*/}
-      {/*    <Button variant="contained" startIcon={<Twitter />}>*/}
-      {/*      Twitter*/}
-      {/*    </Button>*/}
-      {/*    <Button variant="contained" startIcon={<Instagram />}>*/}
-      {/*      Instagram*/}
-      {/*    </Button>*/}
-      {/*  </div>*/}
-      {/*</Modal>*/}
     </Container>
   );
 };
