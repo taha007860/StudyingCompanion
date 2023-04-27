@@ -36,6 +36,7 @@ import { useEffect, useState } from "react";
 import { db } from "../models/firebase";
 import { auth } from "../models/firebase";
 import styled from "styled-components";
+import taskimg from "../../assets/tasklist.jpg"
 import {
   collection,
   query,
@@ -266,7 +267,7 @@ function TaskList() {
         border: "1px solid primary.main",
         borderRadius: 4,
         boxShadow: 2,
-        marginTop: "2.5rem",
+        marginTop: "2.5rem"
       }}
     >
       <Box
