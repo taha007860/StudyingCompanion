@@ -39,7 +39,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { db } from "../models/firebase";
 import { auth } from "../models/firebase";
-import homeBackground from "../../assets/hommie.jpeg";
+import Image1 from "../../assets/Image1.jpg";
 import {
   collection,
   query,
@@ -363,13 +363,13 @@ function TaskList() {
             <AddIcon />
           </IconButton>
         </Box>
-        
+
         <List
           sx={{
             width: "100%",
             maxWidth: 560,
             bgcolor: "background.paper",
-            borderRadius: 10
+            borderRadius: 10,
           }}
         >
           <Dialog open={open} onClose={handleClose} fullWidth={true}>
