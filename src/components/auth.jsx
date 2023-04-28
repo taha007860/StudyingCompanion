@@ -53,7 +53,7 @@ const Auth = () => {
           sx={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
+            justifyContent: "center",
             mb: "1rem",
           }}
         >
@@ -63,8 +63,14 @@ const Auth = () => {
               textDecoration: "none",
             }}
           >
-            <Button variant="contained" 
-            >Login</Button>
+            <Button
+              variant="contained"
+              sx={{
+                mx: "2rem",
+              }}
+            >
+              Login
+            </Button>
           </Link>
           <Link
             to="/auth/Signup"
@@ -72,14 +78,21 @@ const Auth = () => {
               textDecoration: "none",
             }}
           >
-            <Button variant="contained">Sign Up</Button>
+            <Button
+              variant="contained"
+              sx={{
+                mx: "2rem",
+              }}
+            >
+              Sign Up
+            </Button>
           </Link>
         </Container>
         <Button
           variant="contained"
           onClick={handleGuest}
           sx={{
-            width: "100%",
+            width: "20%",
           }}
         >
           Continue as Guest

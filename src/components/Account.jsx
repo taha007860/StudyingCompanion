@@ -46,7 +46,7 @@ export const Account = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [open, setOpen] = useState(false);
   const [time, setTime] = useState(0);
-  const [counter, setCounter] = useState(null);
+  let counter = {};
 
   const update = () => {
     const fetch = async () => {
@@ -57,7 +57,7 @@ export const Account = () => {
         )
       );
       taskSnapshot.forEach((task) => {
-        setCounter(task.data());
+        counter = task.data();
       });
     };
     fetch().then(() => {
@@ -74,11 +74,6 @@ export const Account = () => {
     return update();
   }, []);
 
-  // setTime(
-  //   counter.Worktime != null
-  //     ? Number((counter.Worktime / 60).toFixed(2))
-  //     : 0
-  // );
   const data = [
     {
       name: auth.currentUser?.displayName,
@@ -90,7 +85,11 @@ export const Account = () => {
     },
     {
       name: "User 3",
-      "Time Spent": 5,
+      "Time Spent": 21,
+    },
+    {
+      name: "Average",
+      "Time Spent": 18,
     },
   ];
 
@@ -230,7 +229,7 @@ export const Account = () => {
       </Dialog>
       <Box>
         <BarChart
-          width={300}
+          width={400}
           height={300}
           data={data}
           margin={{

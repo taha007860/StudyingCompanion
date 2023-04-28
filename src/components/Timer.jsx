@@ -251,7 +251,7 @@ const Timer = () => {
         backgroundImage: `url(${currentImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        minHeight: "95.4vh",
+        minHeight: "92.75vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",

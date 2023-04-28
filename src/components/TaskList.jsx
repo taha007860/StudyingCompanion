@@ -56,6 +56,7 @@ import {
   getDoc,
 } from "firebase/firestore";
 import defaultTasks from "./defaultTasks";
+import background from "../../assets/background.jpg";
 
 function TaskList() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -318,18 +319,18 @@ function TaskList() {
   };
 
   return (
-    
-    <div className="Background"
-    style={{
-      backgroundImage: `url(${homeBackground})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      minHeight: "91.4vh",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center"
-          }}
-  >
+    <div
+      className="Background"
+      style={{
+        backgroundImage: `url(${Image1})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        minHeight: "92.75vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+      }}
+    >
       <Container
         maxWidth="sm"
         sx={{
