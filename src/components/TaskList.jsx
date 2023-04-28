@@ -39,7 +39,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { db } from "../models/firebase";
 import { auth } from "../models/firebase";
-import homeBackground from "../../assets/hommie.jpeg";
+import Image1 from "../../assets/Image1.jpg";
 import {
   collection,
   query,
@@ -319,17 +319,17 @@ function TaskList() {
 
   return (
     
-    <Container sx={{
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      width: "100%",
+    <div className="Background"
+    style={{
       backgroundImage: `url(${homeBackground})`,
-      backgroundRepeat: "no-repeat",
       backgroundSize: "cover",
-      
-    }}
->
+      backgroundPosition: "center",
+      minHeight: "91.4vh",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center"
+          }}
+  >
       <Container
         maxWidth="sm"
         sx={{
@@ -363,13 +363,13 @@ function TaskList() {
             <AddIcon />
           </IconButton>
         </Box>
-        
+
         <List
           sx={{
             width: "100%",
             maxWidth: 560,
             bgcolor: "background.paper",
-            borderRadius: 10
+            borderRadius: 10,
           }}
         >
           <Dialog open={open} onClose={handleClose} fullWidth={true}>
@@ -621,7 +621,7 @@ function TaskList() {
           </Alert>
         </Snackbar>
       </Container>
-    </Container>
+    </div>
   );
 }
 
