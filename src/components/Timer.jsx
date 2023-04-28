@@ -10,6 +10,7 @@ import {
   where,
   doc,
   getDoc,
+  increment,
 } from "firebase/firestore";
 import { db } from "../models/firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -18,6 +19,8 @@ import Image1 from "../../assets/Image1.jpg";
 import Image2 from "../../assets/Image2.jpg";
 import Image3 from "../../assets/Image3.jpg";
 import Image4 from "../../assets/Image4.jpg";
+import { auth } from "../models/firebase";
+
 const Timer = () => {
   let x = useRef(0);
   const imageArr = [Image1, Image2, Image3, Image4];
@@ -41,7 +44,21 @@ const Timer = () => {
   const [breakString, setBreakString] = useState("");
 
   const [workTime, setWorkTime] = useState(0); //for firestore
-  const [breakTimer, setBreakTimer] = useState(0); //For fireStore
+
+  const timerRef = collection(db, "Timer");
+  const [counterID, setCounterID] = useState("");
+  const update = async () => {
+    const getCounterID = query(
+      timerRef,
+      where("UserID", "==", auth.currentUser?.uid)
+    );
+
+    const snapShot = await getDocs(getCounterID).then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        setCounterID(doc.id);
+      });
+    });
+  };
 
   useEffect(() => {
     const [inputMinutes, inputSeconds] = inputTime.split(":"); //Split minutes from seconds
@@ -54,21 +71,9 @@ const Timer = () => {
   useEffect(() => {
     setLevel("One");
     setActive("novice");
+    update();
   }, []);
-  const updateFireStore = async (Time, userid) => {
-    const document = doc(db, "Timer", userid);
-    const docSnap = await getDoc(document);
-    let usertime = 0;
 
-    if (docSnap.exists()) {
-      const worktime = docSnap.get("Worktime");
-      console.log(worktime);
-      usertime = worktime + Time;
-      console.log(usertime);
-      await updateDoc(document, { Worktime: usertime });
-      await setWorkTime(0);
-    }
-  };
   useEffect(() => {
     let timer;
 
@@ -90,13 +95,6 @@ const Timer = () => {
       timeLeft.minutes === 0 &&
       timeLeft.seconds === 0
     ) {
-      const auth = getAuth();
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          const uid = user.uid;
-          updateFireStore(workTime, uid);
-        }
-      });
       // Timer has ended, reset to break time
       setCountdown(false);
       setInputTime(breakTime);
@@ -110,20 +108,9 @@ const Timer = () => {
       return () => clearTimeout(timer);
     }
   }, [timeLeft, timerRunning, countdown, breakTime, Customed, workTime]);
-  useEffect(() => {
-    const auth = getAuth();
-    if (timeLeft.minutes === 0 && timeLeft.seconds === 0) {
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          const uid = user.uid;
-          updateFireStore(workTime, uid);
-        }
-      });
-    }
-  }, [timerRunning, timeLeft]);
+  useEffect(() => {}, [inputTime, timeLeft]);
 
   const handleTotal = () => {
-    const auth = getAuth();
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const uid = user.uid;
@@ -152,13 +139,22 @@ const Timer = () => {
     setButtonText("Start");
     setTimerRunning(false);
 
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const uid = user.uid;
-        updateFireStore(workTime, uid);
+    console.log(inputTime);
+    console.log(timeLeft);
+
+    console.log(counterID);
+    if (!auth.currentUser?.isAnonymous) {
+      try {
+        const docRef = updateDoc(doc(db, "Timer", counterID), {
+          Worktime: increment(
+            parseInt(inputTime.split(":")[0]) * 60 -
+              (timeLeft.seconds + timeLeft.minutes * 60)
+          ),
+        });
+      } catch (e) {
+        console.error(e);
       }
-    });
+    }
   };
   const handleClick = () => {
     if (inputTime !== "0:00")

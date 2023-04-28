@@ -62,14 +62,11 @@ export const Signup = () => {
             displayName || email.substring(0, email.indexOf("@")) || "User123",
         })
           .then(() => {
-            const TimerRef = setDoc(
-              doc(db, "Timer", "" + auth.currentUser.uid),
-              {
-                BreakTime: 0,
-                UserID: auth.currentUser.uid,
-                Worktime: 0,
-              }
-            );
+            const TimerRef = addDoc(collection(db, "Timer"), {
+              BreakTime: 0,
+              UserID: auth.currentUser.uid,
+              Worktime: 0,
+            });
             const taskRef = addDoc(collection(db, "tasks"), sampleTask)
               .then((taskID) => {
                 console.log("Sample task written with ID: ", taskID.id);
@@ -133,16 +130,57 @@ export const Signup = () => {
   };
 
   const handleGoogleSignUp = async () => {
-    try {
-      await signInWithPopup(auth, googleProvider).then((e) => {
-        const credential = GoogleAuthProvider.credentialFromResult(e);
-        const token = credential.accessToken;
-        const user = e.user;
-        console.log(user);
+    const sampleTask = {
+      name: `Sample Task`,
+      status: "Not completed",
+      date: Timestamp.fromDate(new Date()).toDate(),
+      priority: "1",
+      public: false,
+      content: "This is a sample task. You can delete it.",
+      sharedWith: [],
+    };
+    await signInWithPopup(auth, googleProvider).then((e) => {
+      const TimerRef = addDoc(doc(db, "Timer"), {
+        BreakTime: 0,
+        UserID: auth.currentUser.uid,
+        Worktime: 0,
       });
-    } catch (e) {
-      console.error(e);
-    }
+      const taskRef = addDoc(collection(db, "tasks"), sampleTask)
+        .then((taskID) => {
+          console.log("Sample task written with ID: ", taskID.id);
+          const docRef = addDoc(collection(db, "TaskList"), {
+            public: false,
+            userID: auth.currentUser.uid,
+            tasks: [taskID.id],
+          }).then((docid) => {
+            addDoc(collection(db, "tasks", taskID.id, "subTasks"), {
+              name: "Sample Subtask",
+              description: "This is a sample subtask. You can delete it.",
+              priority: "1",
+              dueDate: Timestamp.fromDate(new Date()).toDate(),
+              status: "Not completed",
+            });
+            console.log("Document written with ID: ", docid.id);
+            const settingRef = addDoc(collection(db, "settings"), {
+              userID: auth.currentUser.uid,
+              pomdoroLevel: "",
+              settingOne: "false",
+            })
+              .then(() => {
+                console.log("Default settings applied.");
+                setEmailError(null);
+                setPasswordError(null);
+                navigate("/Timer");
+                console.log(auth);
+              })
+              .catch((e) => {
+                setLoading(false);
+                console.error(e);
+              });
+          });
+        })
+        .catch((e) => console.error(e));
+    });
   };
 
   return (
