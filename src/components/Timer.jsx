@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import { createTheme } from "@mui/material/styles";
 import CustomizableDialog from "./Popup.jsx";
 import {
   updateDoc,
@@ -78,7 +77,7 @@ const Timer = () => {
     let timer;
 
     if (timerRunning && (timeLeft.minutes > 0 || timeLeft.seconds > 0)) {
-      if (timeLeft.minutes > 60) setTimeLeft({ minutes: 60, seconds: 0 });
+      if (timeLeft.minutes > 120) setTimeLeft({ minutes: 120, seconds: 0 });
       if (timeLeft.seconds > 60) setTimeLeft({ seconds: 60 });
       timer = setTimeout(() => {
         setTimeLeft({
@@ -263,8 +262,8 @@ const Timer = () => {
             container
             display="flex"
             mb="10px"
-            columnSpacing={12}
-            sx={{ mr: "20px" }}
+            columnSpacing={7}
+
           >
             <Grid item xs={3}>
               <Button
@@ -276,7 +275,7 @@ const Timer = () => {
                   backgroundColor: active === "novice" ? "#7AB8BF" : "#EFF7FF",
                 }}
                 sx={{
-                  ml: "10px",
+
                   borderRadius: "50px",
                   borderColor: "White",
                   color: "Black",
@@ -284,7 +283,7 @@ const Timer = () => {
                     "0px 1px 1px rgba(0, 0, 0, 0.2),0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12)",
                 }}
               >
-                &nbsp;&nbsp;Easy&nbsp;&nbsp;
+                &nbsp;&nbsp;Easy&nbsp;&nbsp;&nbsp;
               </Button>
             </Grid>
             <Grid item xs={3}>
@@ -317,6 +316,7 @@ const Timer = () => {
                   backgroundColor: active === "expert" ? "#7AB8BF" : "#EFF7FF",
                 }}
                 sx={{
+                  ml:"3px",
                   borderRadius: "50px",
                   borderColor: "White",
                   color: "Black",
@@ -328,9 +328,47 @@ const Timer = () => {
                 expert
               </Button>
             </Grid>
+            <Grid item xs={3}>
+              <CustomizableDialog
+              content={
+                <Box>
+                  <Box sx={{ flexDirection: "row" }}>
+                    <Typography>
+                      Customize Timer
+                      <ImageIcon
+                        onClick={ChangeImage}
+                        style={{ cursor: "pointer" }}
+                        sx={{ ml: "40px" }}
+                      ></ImageIcon>
+                    </Typography>
+                  </Box>
+                  <TextField
+                    inputProps={{
+                      style: { textAlign: "center" },
+                      maxlength: "5",
+                    }}
+                    className="TimeInput"
+                    disabled={!disabled}
+                    placeholder="Enter Time"
+                    value={inputTime}
+                    onChange={handleInputChange}
+                    sx={{
+                      width: "130px",
+                      mx: "auto",
+                      bgcolor: "#FFFFFF",
+                    }}
+                    size={"small"}
+                  ></TextField>
+                  <Button sx={{ width: "30px" }} onClick={handleClear}>
+                    Clear
+                  </Button>
+                </Box>
+              }
+            />
+            </Grid>
           </Grid>
         </Box>
-        <Box sx={{ fontFamily: "Space Grotesk" }}>
+        <Box sx={{ fontFamily: "Space Grotesk",ml:"47px" }}>
           <Box display="flex" sx={{ flexDirection: "column" }}>
             <Grid display="flex" mx="auto">
               <Typography sx={{ fontSize: "80px", color: "White" }}>
@@ -363,42 +401,6 @@ const Timer = () => {
               >
                 {buttonText}
               </Button>
-              <CustomizableDialog
-                content={
-                  <Box>
-                    <Box sx={{ flexDirection: "row" }}>
-                      <Typography>
-                        Customize Timer
-                        <ImageIcon
-                          onClick={ChangeImage}
-                          style={{ cursor: "pointer" }}
-                          sx={{ ml: "40px" }}
-                        ></ImageIcon>
-                      </Typography>
-                    </Box>
-                    <TextField
-                      inputProps={{
-                        style: { textAlign: "center" },
-                        maxlength: "5",
-                      }}
-                      className="TimeInput"
-                      disabled={!disabled}
-                      placeholder="Enter Time"
-                      value={inputTime}
-                      onChange={handleInputChange}
-                      sx={{
-                        width: "130px",
-                        mx: "auto",
-                        bgcolor: "#FFFFFF",
-                      }}
-                      size={"small"}
-                    ></TextField>
-                    <Button sx={{ width: "30px" }} onClick={handleClear}>
-                      Clear
-                    </Button>
-                  </Box>
-                }
-              />
             </Box>
           </Box>
         </Box>
