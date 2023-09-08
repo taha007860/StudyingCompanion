@@ -31,7 +31,7 @@ npm install
 3. Start the development server.
 
 ```bash
-npm start
+npm run dev
 ```
 
 ## Contributing
