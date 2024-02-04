@@ -79,7 +79,7 @@ function TaskList() {
   const tasksRef = collection(db, "tasks");
 
   const navigate = useNavigate();
-
+  
   const update = () => {
     let taskList;
     let tasks = [];
@@ -88,7 +88,7 @@ function TaskList() {
       tasklistRef,
       where("userID", "==", auth.currentUser?.uid)
     );
-
+    
     const fetchIDs = async () => {
       const querySnapshot = await getDocs(getTasksID);
       querySnapshot.forEach((doc) => {
@@ -128,8 +128,8 @@ function TaskList() {
 
   useEffect(() => {
     try {
-      if (auth.currentUser?.isAnonymous) {
-        setTasks(defaultTasks);
+      if (!auth.currentUser || auth.currentUser.isAnonymous) {
+        setTasks([]); // Set tasks to an empty array for Guest users
       } else {
         return update();
       }
@@ -140,7 +140,6 @@ function TaskList() {
 
   const handleClick = (event, task) => {
     setAnchorEl(event.currentTarget);
-    console.log(event.currentTarget);
     setActiveTask(task);
   };
 
@@ -192,6 +191,7 @@ function TaskList() {
         .catch((error) => {
           console.error(error);
         });
+        handleClose();
     }
   };
 
@@ -485,123 +485,81 @@ function TaskList() {
           />
           {tasks.map((task) => (
             <ListItem
-              key={task.id}
-              secondaryAction={
-                <IconButton
-                  edge="end"
-                  aria-label="options"
-                  onClick={(e) => handleClick(e, task)}
-                >
-                  <MoreVertIcon />
-                </IconButton>
-              }
-            >
-              <ListItemButton
-                onClick={() => {
-                  handleTaskDetails(task);
-                }}
+            key={task.id}
+            secondaryAction={
+              <IconButton
+                edge="end"
+                aria-label="options"
+                onClick={(e) => handleClick(e, task)}
               >
-                <ListItemAvatar>
-                  <Avatar
+                <MoreVertIcon />
+              </IconButton>
+            }
+          >
+            <ListItemButton>
+              <ListItemAvatar>
+                <Avatar
+                  sx={{
+                    bgcolor: "primary.main",
+                    color: "primary.contrastText",
+                    transform: "translateY(-45px)",
+                  }}
+                >
+                  {auth.currentUser?.displayName?.charAt(0)}
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={<Typography variant="h6">{task.data().name}</Typography>}
+                secondary={
+                  <Box
                     sx={{
-                      bgcolor: "primary.main",
-                      color: "primary.contrastText",
-                      transform: "translateY(-85px)",
+                      display: "flex",
+                      alignItems: "baseline",
+                      flexDirection: "column",
                     }}
                   >
-                    {auth.currentUser?.displayName?.charAt(0)}
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={
-                    <Typography variant="h6">{task.data().name}</Typography>
-                  }
-                  secondary={
-                    <Box
+                    <Typography variant="body1">
+                      {task.data().content && (
+                        <>
+                          <Box sx={{ mb: 1 }}>Description:</Box>
+                          <Box sx={{ mb: 1, ml: 0 }}>{task.data().content}</Box>
+                        </>
+                      )}
+                      Priority: {task.data().priority === 1 ? 'Low' : task.data().priority === 2 ? 'Medium' : task.data().priority === 3 ? 'High' : 'Low'}
+ {/* Display the priority label */}
+                    </Typography>
+                    <Typography
                       sx={{
-                        display: "flex",
-                        alignItems: "baseline",
-                        flexDirection: "column",
+                        ml: "0rem",
+                        mt: "1rem",
                       }}
                     >
-                      <Typography variant="body1">
-                        {task.data().content && (
-                          <>
-                            <Box sx={{ mb: 1 }}>Description:</Box>
-                            <Box sx={{ mb: 1, ml: 0 }}>
-                              {task.data().content}
-                            </Box>
-                          </>
-                        )}
-                        <Box sx={{ mb: 1, mt: 2 }}>Shared with:</Box>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            ml: -1,
-                          }}
-                        >
-                          {task.data().sharedWith.length > 0 ? (
-                            task
-                              .data()
-                              .sharedWith.map((user, index) => (
-                                <Avatar
-                                  key={index}
-                                  sx={{ ml: 1 }}
-                                  alt={user}
-                                  src={`https://i.pravatar.cc/32?u=${user}`}
-                                />
-                              ))
-                          ) : (
-                            <Typography sx={{ ml: 1 }}>No one</Typography>
-                          )}
-                        </Box>
-                      </Typography>
-
-                      <Typography
-                        sx={{
-                          ml: "0rem",
-                          mt: "1rem",
-                        }}
-                      >
-                        Created on:{" "}
-                        {auth.currentUser &&
-                          (auth.currentUser?.isAnonymous
-                            ? task?.data().date.toDateString()
-                            : task?.data().date.toDate().toDateString())}
-                      </Typography>
-                    </Box>
-                  }
-                  sx={{ ml: 2, mt: 1 }}
-                />
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <LinearProgress
-                    variant="determinate"
-                    value={0}
-                    sx={{ width: 100 }}
-                  />
-                  <Typography variant="body2" color="text.secondary">
-                    {/*{`${task.data().progress}%`}*/}
-                    0%
-                  </Typography>
-                </Stack>
-              </ListItemButton>
-            </ListItem>
+                      Created on:{" "}
+                      {auth.currentUser &&
+                        (auth.currentUser?.isAnonymous
+                          ? task?.data().date.toDateString()
+                          : task?.data().date.toDate().toDateString())}
+                    </Typography>
+                  </Box>
+                }
+                sx={{ ml: 2, mt: 1 }}
+              />
+            </ListItemButton>
+          </ListItem>
           ))}
           <Menu
-            id="simple-menu"
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            <MenuItem onClick={() => handleTaskDetails()}>
-              Task Details
-            </MenuItem>
-            <MenuItem onClick={() => handleShare()}>Share</MenuItem>
-            <MenuItem onClick={() => handleEdit()}>Edit</MenuItem>
-            <MenuItem onClick={(e) => handleDelete(e)}>Delete</MenuItem>
-          </Menu>
+  id="simple-menu"
+  anchorEl={anchorEl}
+  keepMounted
+  open={Boolean(anchorEl)}
+  onClose={handleClose}
+>
+  {/* Remove the "Task Details" MenuItem */}
+  <MenuItem onClick={() => handleShare()}>Share</MenuItem>
+  <MenuItem onClick={() => handleEdit()}>Edit</MenuItem>
+  <MenuItem onClick={(e) => handleDelete(e)}>Delete</MenuItem>
+</Menu>
+
         </List>
       </Container>
       <Container

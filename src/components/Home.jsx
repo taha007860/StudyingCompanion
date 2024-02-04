@@ -18,6 +18,7 @@ import joe from "../../assets/Joe.jpg";
 import adam from "../../assets/Adam.jpg";
 import zaatar from "../../assets/Zaatar.jpg";
 import animation from "../../assets/animation.gif";
+
 const Home = () => {
   const navigate = useNavigate();
   const handleLogin = async () => {
@@ -59,80 +60,81 @@ const Home = () => {
           color: "#fff",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <Box>
-              <Typography
-                variant="h3"
-                sx={{ fontWeight: "bold", color: "black" }}
-              >
-                Studying made easy.
-              </Typography>
-              <Typography variant="h5" sx={{ mt: 3, color: "black" }}>
-                StudyingCompanion helps you organize your study resources,
-                collaborate with peers, and stay on top of your coursework.
-              </Typography>
-            </Box>
-          </Box>
-          <Box sx={{ ml: "300px", mr: "100px" }}>
-            <Box
-              component="img"
-              src={animation}
-              alt="Animation"
-              width={"px"}
-              height={"350px"}
-            />
-          </Box>
-        </Box>
-        <Button
-          variant="contained"
-          sx={{ backgroundColor: "#fff", color: "#000" }}
-          onClick={handleLogin}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+            padding: "20px",
+          }}
         >
-          Get Started
-        </Button>
+          <Typography
+            variant="h3"
+            sx={{ fontWeight: "bold", color: "black" }}
+          >
+            Studying made easy.
+          </Typography>
+          <Typography variant="h5" sx={{ mt: 3, color: "black" }}>
+            StudyingCompanion helps you organize your study resources,
+            collaborate with peers, and stay on top of your coursework.
+          </Typography>
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: "#fff", color: "#000", mt: 3 }}
+            onClick={handleLogin}
+          >
+            Get Started
+          </Button>
+        </Box>
+
+        <Box sx={{ ml: "auto", mr: "auto", textAlign: "center" }}>
+          <Box
+            component="img"
+            src={animation}
+            alt="Animation"
+            width={"100%"}
+            height={"auto"}
+          />
+        </Box>
       </Box>
+
       <Box
         sx={{
           mt: 10,
           ml: 3,
         }}
       >
-        <Box
-          sx={{
-            borderRadius: 10,
-            fontFamily: "Open Sans",
-            mx: "1rem",
-            marginBottom: "60px",
-            marginLeft: "-20px",
-            marginTop: "-20px",
-            width: 1 / 2,
-          }}
-        >
-          <Accordion sx={{ ml: "20px" }}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <Box
+              sx={{
+                borderRadius: 10,
+                fontFamily: "Open Sans",
+                mx: "1rem",
+                marginBottom: "30px",
+                padding: "20px",
+              }}
             >
-              <Typography>Shareable To-Do Lists</Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ ml: "20px" }}>
-              <Typography>
-                Boost your productivity with shareable to-do lists that
-                seamlessly integrate with priority settings. With these tools,
-                you can easily organize and prioritize your tasks and share them
-                with others to collaborate and stay on track.
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion sx={{ ml: "20px" }}>
+              <Accordion sx={{ ml: "20px" }}>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography>Shareable To-Do Lists</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography>
+                    Boost your productivity with shareable to-do lists that
+                    seamlessly integrate with priority settings. With these
+                    tools, you can easily organize and prioritize your tasks and
+                    share them with others to collaborate and stay on track.
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
+              <Accordion sx={{ ml: "20px" }}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel2a-content"
@@ -164,95 +166,106 @@ const Home = () => {
               </Typography>
             </AccordionDetails>
           </Accordion>
-        </Box>
-        <Box>
-          <Grid container>
-            <Grid item xs={6}>
-              <Typography
-                variant="h4"
-                sx={{ fontWeight: "bold", color: "black" }}
-              >
-                Meet the Team
-              </Typography>
-              <Grid container spacing={0} sx={{ mt: 3 }}>
-                <Grid item sm={4}>
-                  <Avatar
-                    alt="Joe"
-                    src={joe}
-                    sx={{ width: 100, height: 100, mx: "auto" }}
-                  />
-                  <Typography variant="h6" sx={{ fontWeight: "bold", mt: 2 }}>
-                    Joe
-                  </Typography>
-                  <Typography variant="subtitle1" sx={{ fontStyle: "italic" }}>
-                    Frontend Developer
-                  </Typography>
-                  <Button
-                    variant="outlined"
-                    startIcon={<GitHubIcon />}
-                    sx={{ mt: 2 }}
-                    href="https://github.com/DrunkEye"
-                    target="_blank"
-                  >
-                    GitHub
-                  </Button>
-                </Grid>
-                <Grid item xs={3} sm={4}>
-                  <Avatar
-                    alt="Adam"
-                    src={adam}
-                    sx={{ width: 100, height: 100, mx: "auto" }}
-                  />
-                  <Typography variant="h6" sx={{ fontWeight: "bold", mt: 2 }}>
-                    Adam
-                  </Typography>
-                  <Typography variant="subtitle1" sx={{ fontStyle: "italic" }}>
-                    Backend Developer
-                  </Typography>
-                  <Button
-                    variant="outlined"
-                    startIcon={<GitHubIcon />}
-                    sx={{ mt: 2 }}
-                    href="https://github.com/AdamHarb"
-                    target="_blank"
-                  >
-                    GitHub
-                  </Button>
-                </Grid>
-                <Grid item sm={4}>
-                  <Avatar
-                    alt="Zaatari"
-                    src={zaatar}
-                    sx={{ width: 100, height: 100, mx: "auto" }}
-                  />
-                  <Typography variant="h6" sx={{ fontWeight: "bold", mt: 2 }}>
-                    Zaatari
-                  </Typography>
-                  <Typography variant="subtitle1" sx={{ fontStyle: "italic" }}>
-                    UI/UX Designer
-                  </Typography>
-                  <Button
-                    variant="outlined"
-                    startIcon={<GitHubIcon />}
-                    sx={{ mt: 2 }}
-                    href="https://github.com/taha007860"
-                    target="_blank"
-                  >
-                    GitHub
-                  </Button>
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item xs={5}>
-              <Box>
-                <Typography
-                  variant="h4"
-                  sx={{ fontWeight: "bold", color: "#000" }}
-                >
-                  Frequently Asked Questions
-                </Typography>
-                <Box sx={{ borderRadius: "100px" }}>
-                  <Accordion sx={{ mt: 3 }}>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+  <Box
+    sx={{
+      borderRadius: "10px",
+      padding: "20px",
+      mt: { xs: 3, md: 0 }, // Adjust the margin for smaller screens
+    }}
+  >
+    <Typography
+      variant="h4"
+      sx={{ fontWeight: "bold", color: "black" }}
+    >
+      Meet the Team
+    </Typography>
+    <Grid container spacing={2} sx={{ mt: 3 }}>
+      <Grid item xs={6} sm={4}>
+        <Avatar
+          alt="Joe"
+          src={joe}
+          sx={{ width: 100, height: 100, mx: "-15px" }}
+        />
+        <Typography variant="h6" sx={{ fontWeight: "bold", mt: 2 }}>
+          Joe
+        </Typography>
+        <Typography variant="subtitle1" sx={{ fontStyle: "italic" }}>
+          Frontend Developer
+        </Typography>
+        <Button
+          variant="outlined"
+          startIcon={<GitHubIcon />}
+          sx={{ mt: 2 }}
+          href="https://github.com/DrunkEye"
+          target="_blank"
+        >
+          GitHub
+        </Button>
+      </Grid>
+      <Grid item xs={6} sm={4}>
+        <Avatar
+          alt="Adam"
+          src={adam}
+          sx={{ width: 100, height: 100, mx: "-15px" }}
+        />
+        <Typography variant="h6" sx={{ fontWeight: "bold", mt: 2 }}>
+          Adam
+        </Typography>
+        <Typography variant="subtitle1" sx={{ fontStyle: "italic" }}>
+          Backend Developer
+        </Typography>
+        <Button
+          variant="outlined"
+          startIcon={<GitHubIcon />}
+          sx={{ mt: 2 }}
+          href="https://github.com/AdamHarb"
+          target="_blank"
+        >
+          GitHub
+        </Button>
+      </Grid>
+      <Grid item xs={6} sm={4}>
+        <Avatar
+          alt="Zaatari"
+          src={zaatar}
+          sx={{ width: 100, height: 100, mx: "-15px" }}
+        />
+        <Typography variant="h6" sx={{ fontWeight: "bold", mt: 2 }}>
+          Zaatari
+        </Typography>
+        <Typography variant="subtitle1" sx={{ fontStyle: "italic" }}>
+          UI/UX Designer
+        </Typography>
+        <Button
+          variant="outlined"
+          startIcon={<GitHubIcon />}
+          sx={{ mt: 2 }}
+          href="https://github.com/taha007860"
+          target="_blank"
+        >
+          GitHub
+        </Button>
+      </Grid>
+    </Grid>
+  </Box>
+</Grid>
+
+        </Grid>
+      </Box>
+
+      <Box sx={{ ml: 3, mr: 3 }}>
+        <Box sx={{ borderRadius: "10px", mt: 3, padding: "20px" }}>
+          <Typography
+            variant="h4"
+            sx={{ fontWeight: "bold", color: "#000" }}
+          >
+            Frequently Asked Questions
+          </Typography>
+          <Box sx={{ borderRadius: "10px", mt: 3 }}>
+          <Accordion sx={{ mt: 3 }}>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                       <Typography variant="h5">
                         What is StudyingCompanion?
@@ -337,12 +350,10 @@ const Home = () => {
                       </Typography>
                     </AccordionDetails>
                   </Accordion>
-                </Box>
-              </Box>
-            </Grid>
-          </Grid>
+          </Box>
         </Box>
       </Box>
+
       <Footer />
     </div>
   );

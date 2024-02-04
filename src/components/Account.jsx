@@ -13,11 +13,6 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import { Settings } from "./Settings";
-import { PaymentMethods } from "./PaymentMethods";
-import { Subscriptions } from "./Subscriptions";
-import { Notification } from "./Notification";
-import { deleteUser } from "firebase/auth";
 import {
   AreaChart,
   Area,
@@ -40,10 +35,6 @@ import {
 
 export const Account = () => {
   const [user, setUser] = useState(null);
-  const [showSettings, setShowSettings] = useState(false);
-  const [showPaymentMethods, setShowPaymentMethods] = useState(false);
-  const [showSubscriptions, setShowSubscriptions] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   const [open, setOpen] = useState(false);
   const [time, setTime] = useState(0);
   let counter = {};
@@ -123,18 +114,7 @@ export const Account = () => {
         console.error(e);
       });
   };
-  const handleSettings = () => {
-    setShowSettings(!showSettings);
-  };
-  const handlePaymentMethods = () => {
-    setShowPaymentMethods(!showPaymentMethods);
-  };
-  const handleSubscriptions = () => {
-    setShowSubscriptions(!showSubscriptions);
-  };
-  const handleNotifications = () => {
-    setShowNotifications(!showNotifications);
-  };
+
   return (
     <Box
       sx={{
@@ -161,34 +141,6 @@ export const Account = () => {
           {user.email}
         </Typography>
       )}
-      <Button
-        variant="contained"
-        sx={{ marginBottom: "1rem" }}
-        onClick={handleSettings}
-      >
-        Settings
-      </Button>
-      <Button
-        variant="contained"
-        sx={{ marginBottom: "1rem" }}
-        onClick={handlePaymentMethods}
-      >
-        Payment Methods
-      </Button>
-      <Button
-        variant="contained"
-        sx={{ marginBottom: "1rem" }}
-        onClick={handleSubscriptions}
-      >
-        Subscriptions
-      </Button>
-      <Button
-        variant="contained"
-        sx={{ marginBottom: "1rem" }}
-        onClick={handleNotifications}
-      >
-        Notifications
-      </Button>
       <Button variant="contained" color="error" onClick={handleLogout}>
         Logout
       </Button>
@@ -202,10 +154,6 @@ export const Account = () => {
       >
         Delete Account
       </Button>
-      {showSettings && <Settings />}
-      {showPaymentMethods && <PaymentMethods />}
-      {showSubscriptions && <Subscriptions />}
-      {showNotifications && <Notification />}
       <Dialog
         open={open}
         onClose={() => setOpen(false)}

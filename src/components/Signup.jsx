@@ -32,6 +32,7 @@ export const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState(null);
   const [passwordError, setPasswordError] = useState(null);
+  const [displayNameError, setDisplayNameError] = useState(null);
   const navigate = useNavigate();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -54,6 +55,12 @@ export const Signup = () => {
     setLoading(true);
     setEmailError(null);
     setPasswordError(null);
+    if (displayName && displayName.length > 7) {
+      // Display name should be 7 characters or less
+      setDisplayNameError("Display name should be 7 characters or less");
+      setLoading(false);
+      return;
+    }
 
     await createUserWithEmailAndPassword(auth, email, password)
       .then(() => {
@@ -198,15 +205,20 @@ export const Signup = () => {
         positive development in ADHD children.
       </Typography>
       <FormControl sx={{ m: 1 }} variant="outlined">
-        <InputLabel htmlFor="outlined-displayName">Display Name</InputLabel>
-        <OutlinedInput
-          id="outlined-displayName"
-          label="Display Name"
-          onChange={(e) => {
-            setDisplayName(e.target.value);
-          }}
-        />
-      </FormControl>
+  <InputLabel htmlFor="outlined-displayName">Display Name</InputLabel>
+  <OutlinedInput
+    id="outlined-displayName"
+    label="Display Name"
+    onChange={(e) => {
+      setDisplayName(e.target.value);
+      setDisplayNameError(null); // Clear the error message when the user types
+    }}
+    error={!!displayNameError}
+  />
+  {displayNameError != null && (
+    <FormHelperText error={true}> {displayNameError} </FormHelperText>
+  )}
+</FormControl>
       <FormControl sx={{ m: 1 }} required={true} variant="outlined">
         <InputLabel htmlFor="outlined-email">Email</InputLabel>
         <OutlinedInput
