@@ -193,7 +193,7 @@ const Home = () => {
           Joe
         </Typography>
         <Typography variant="subtitle1" sx={{ fontStyle: "italic" }}>
-          Frontend Developer
+          Backend Developer
         </Typography>
         <Button
           variant="outlined"
@@ -215,7 +215,7 @@ const Home = () => {
           Adam
         </Typography>
         <Typography variant="subtitle1" sx={{ fontStyle: "italic" }}>
-          Backend Developer
+          FullStack Developer
         </Typography>
         <Button
           variant="outlined"
@@ -237,7 +237,7 @@ const Home = () => {
           Zaatari
         </Typography>
         <Typography variant="subtitle1" sx={{ fontStyle: "italic" }}>
-          UI/UX Designer
+          Frontend Developer
         </Typography>
         <Button
           variant="outlined"
