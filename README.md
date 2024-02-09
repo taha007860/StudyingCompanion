@@ -12,6 +12,9 @@ This is a studying companion react app designed for the Software Engineering cla
 
 - **Customization:** The app allows users to customize the interface to their preferences, ensuring a personalized experience.
 
+## Watch Demo
+https://github.com/taha007860/Contact-Book/assets/96583299/2ae0a06c-c99a-447b-85ab-3020dfebdcdd
+
 ## Getting Started
 
 To get started with the app, follow these steps:
